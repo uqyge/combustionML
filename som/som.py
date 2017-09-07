@@ -63,9 +63,9 @@ class SOM(object):
             #will be fed in during training
 
             #The training vector
-            self._vect_input = tf.placeholder("float", [dim])
+            self._vect_input = tf.placeholder(tf.float32, [dim])
             #Iteration number
-            self._iter_input = tf.placeholder("float")
+            self._iter_input = tf.placeholder(tf.float32)
 
             ##CONSTRUCT TRAINING OP PIECE BY PIECE
             #Only the final, 'root' training op needs to be assigned as
