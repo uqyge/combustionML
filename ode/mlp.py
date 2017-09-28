@@ -18,7 +18,8 @@ y_space = np.linspace(0, 1, ny)
 
 def analytic_solution(x):
     return (1 / (np.exp(np.pi) - np.exp(-np.pi))) * \
-    		np.sin(np.pi * x[0]) * (np.exp(np.pi * x[1]) - np.exp(-np.pi * x[1]))
+           np.sin(np.pi * x[0]) * (np.exp(np.pi * x[1]) - np.exp(-np.pi * x[1]))
+
 surface = np.zeros((ny, nx))
 
 for i, x in enumerate(x_space):
