@@ -11,7 +11,7 @@ from matplotlib import cm
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
 
-
+ntrain = 1000
 nx = 20
 ny = 20
 
@@ -24,23 +24,22 @@ def analytic_solution(x):
            np.sin(np.pi * x[0]) * (np.exp(np.pi * x[1]) - np.exp(-np.pi * x[1]))
 
 
-
-
 x_input = np.zeros((ny,nx,2))
-#y_anal = np.zeros((nx*ny,))
 
 surface = np.zeros((ny, nx))
 for i, x in enumerate(x_space):
     for j, y in enumerate(y_space):
         surface[i][j] = analytic_solution([x, y])
         x_input[i][j] = [x, y]
-        # print(i * len(x_space) + j)
-        # x_input[:,i * len(x_space) + j] = [x, y]
-        # y_anal[i*len(x_space) + j] = analytic_solution([x, y])
+
 
 x_input = x_input.reshape(-1, x_input.shape[-1])
-#x_input = x_input.transpose()
 y_anal = surface.reshape(-1,1)
+
+x_train = np.random.rand(ntrain, 2)
+x_train = 1 - x_train
+y_train = [analytic_solution(x) for x in x_train]
+y_train = np.reshape(np.asarray(y_train), (ntrain, -1))
 print('generate data from analytic solution')
 ###
 fig = plt.figure()
@@ -60,23 +59,23 @@ plt.colorbar(surf)
 
 ###
 
-batch_size = 32
+batch_size = 64
 epochs = 400
-ml_post = False
+vsplit = 0.1
 
 print('Building model...')
 model = Sequential()
-model.add(Dense(20, input_shape=(2,)))
+model.add(Dense(100, input_shape=(2,)))
 model.add(Activation('relu'))
 model.add(Dropout(0.))
-model.add(Dense(400))
+model.add(Dense(100))
 model.add(Activation('relu'))
 model.add(Dropout(0.))
-model.add(Dense(20))
+model.add(Dense(100))
 model.add(Activation('relu'))
-model.add(Dropout(0.2))
+model.add(Dropout(0.1))
 model.add(Dense(1))
-#model.add(Activation('linear'))
+
 
 
 
@@ -84,16 +83,18 @@ model.compile(loss='mse',
               optimizer='adam',
               metrics=['accuracy'])
 
-history = model.fit(x_input, y_anal,
+history = model.fit(
+                    x_train, y_train,
+    # x_input, y_anal,
                     batch_size=batch_size,
                     epochs=epochs,
                     verbose=1,
-                    validation_split=0.)
+                    validation_split=vsplit)
 # score = model.evaluate(x_test, y_test,
 #                        batch_size=batch_size, verbose=1)
 # print('Test score:', score[0])
 # print('Test accuracy:', score[1])
-if(ml_post):
+if vsplit:
     # summarize history for accuracy
     fig = plt.figure()
     plt.plot(history.history['acc'])
