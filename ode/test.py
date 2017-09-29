@@ -4,6 +4,11 @@ keras mlp regression
 from __future__ import print_function
 
 import numpy as np
+
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+
 nx = 10
 ny = 10
 
@@ -32,3 +37,32 @@ for i, x in enumerate(x_space):
 x_input = x_input.transpose()
 y_anal = y_anal.transpose()
 print('generate data from analytic solution')
+
+
+###
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+X, Y = np.meshgrid(x_space, y_space)
+surf = ax.plot_surface(X, Y, surface, rstride=1, cstride=1, cmap=cm.viridis,
+        linewidth=0, antialiased=False)
+
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1)
+ax.set_zlim(0, 2)
+
+ax.set_xlabel('$x$')
+ax.set_ylabel('$y$')
+
+###
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+X, Y = np.meshgrid(x_space, y_space)
+surf = ax.plot_surface(X, Y, surface, rstride=1, cstride=1, cmap=cm.viridis,
+        linewidth=0, antialiased=False)
+
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1)
+ax.set_zlim(0, 2)
+
+ax.set_xlabel('$x$')
+ax.set_ylabel('$y$')
