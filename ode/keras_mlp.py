@@ -4,8 +4,8 @@ keras mlp regression
 from __future__ import print_function
 
 import numpy as np
-import keras
-from keras.datasets import reuters
+import matplotlib.pyplot as plt
+
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
 
@@ -22,58 +22,63 @@ def analytic_solution(x):
            np.sin(np.pi * x[0]) * (np.exp(np.pi * x[1]) - np.exp(-np.pi * x[1]))
 
 
+
+
+x_input = np.zeros((ny,nx,2))
+#y_anal = np.zeros((nx*ny,))
+
 surface = np.zeros((ny, nx))
-
-
 for i, x in enumerate(x_space):
     for j, y in enumerate(y_space):
         surface[i][j] = analytic_solution([x, y])
+        x_input[i][j] = [x, y]
+        # print(i * len(x_space) + j)
+        # x_input[:,i * len(x_space) + j] = [x, y]
+        # y_anal[i*len(x_space) + j] = analytic_solution([x, y])
+
+x_input = x_input.reshape(-1, x_input.shape[-1])
+#x_input = x_input.transpose()
+y_anal = surface.reshape(-1,1)
+print('generate data from analytic solution')
+
+batch_size = 10
+epochs = 5000
 
 
-# batch_size = 20
-# epochs = 5
-#
-# print('generate data from analytic solution')
-# (x_train, y_train), (x_test, y_test) = reuters.load_data(num_words=max_words,
-#                                                          test_split=0.2)
-# print(len(x_train), 'train sequences')
-# print(len(x_test), 'test sequences')
-#
-#
-# print(num_classes, 'classes')
-#
-# print('Vectorizing sequence data...')
-# tokenizer = Tokenizer(num_words=max_words)
-# x_train = tokenizer.sequences_to_matrix(x_train, mode='binary')
-# x_test = tokenizer.sequences_to_matrix(x_test, mode='binary')
-# print('x_train shape:', x_train.shape)
-# print('x_test shape:', x_test.shape)
-#
-# print('Convert class vector to binary class matrix '
-#       '(for use with categorical_crossentropy)')
-# y_train = keras.utils.to_categorical(y_train, num_classes)
-# y_test = keras.utils.to_categorical(y_test, num_classes)
-# print('y_train shape:', y_train.shape)
-# print('y_test shape:', y_test.shape)
-#
-# print('Building model...')
-# model = Sequential()
-# model.add(Dense(10, input_shape=(max_words,)))
-# model.add(Activation('relu'))
-# model.add(Dropout(0.5))
-# model.add(Dense(1))
-#
-#
-# model.compile(loss='mean_squared_error',
-#               optimizer='adam',
-#               metrics=['accuracy'])
-#
-# history = model.fit(x_train, y_train,
-#                     batch_size=batch_size,
-#                     epochs=epochs,
-#                     verbose=1,
-#                     validation_split=0.1)
+print('Building model...')
+model = Sequential()
+model.add(Dense(10, input_shape=(2,)))
+model.add(Activation('relu'))
+model.add(Dropout(0))
+model.add(Dense(1))
+
+
+model.compile(loss='mse',
+              optimizer='adam',
+              metrics=['accuracy'])
+
+history = model.fit(x_input, y_anal,
+                    batch_size=batch_size,
+                    epochs=epochs,
+                    verbose=1,
+                    validation_split=0.1)
 # score = model.evaluate(x_test, y_test,
 #                        batch_size=batch_size, verbose=1)
 # print('Test score:', score[0])
 # print('Test accuracy:', score[1])
+# summarize history for accuracy
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+# summarize history for loss
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
