@@ -87,8 +87,16 @@ surf_error = ax.plot_surface(X, Y, abs(surface_predict - surface), rstride=1, cs
 
 ax.set_xlim(0, 1)
 ax.set_ylim(0, 1)
-ax.set_zlim(0, 0.1)
+ax.set_zlim(0, 0.01)
 
 ax.set_xlabel('$x$')
 ax.set_ylabel('$y$')
 plt.colorbar(surf_error)
+
+# 4.Plot actual vs prediction for training set
+fig = plt.figure()
+plt.plot(surface.reshape(-1), surface_predict.reshape(-1), 'ro')
+# Compute R-Square value for training set
+from sklearn.metrics import r2_score
+TestR2Value = r2_score(surface.reshape(-1), surface_predict.reshape(-1))
+print("Training Set R-Square=", TestR2Value)

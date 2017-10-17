@@ -24,29 +24,6 @@ ny = 30
 x_space = np.linspace(0, 1, nx)
 y_space = np.linspace(0, 1, ny)
 
-x_test = np.zeros((ny*nx, 2))
-surface = np.zeros((ny, nx))
-for i, x in enumerate(x_space):
-    for j, y in enumerate(y_space):
-        x_test[i*nx+j] = [x, y]
-        surface[i][j] = analytic_solution([x, y])
-
-###
-fig = plt.figure()
-ax = fig.gca(projection='3d')
-X, Y = np.meshgrid(x_space, y_space)
-surf = ax.plot_surface(X, Y, surface, rstride=1, cstride=1, cmap=cm.viridis,
-                       linewidth=0, antialiased=False)
-
-ax.set_xlim(0, 1)
-ax.set_ylim(0, 1)
-ax.set_zlim(0, 2)
-
-ax.set_xlabel('$x$')
-ax.set_ylabel('$y$')
-plt.colorbar(surf)
-
-###
 print('generate sample data from analytic solution')
 x_bc_l = np.asarray([[0, y] for y in y_space])
 x_bc_r = np.asarray([[1, y] for y in y_space])
@@ -63,8 +40,8 @@ y_train = np.reshape(np.asarray(y_train), (-1, 1))
 
 
 print('Building model...')
-batch_size = 256 * 2
-epochs = 3000
+batch_size = 256 * 4
+epochs = 5000
 vsplit = 0.01
 
 
@@ -106,7 +83,7 @@ history = model.fit(
     x_train, y_train,
     batch_size=batch_size,
     epochs=epochs,
-    verbose=1,
+    verbose=2,
     validation_split=vsplit,
     callbacks=callbacks_list)
 
@@ -128,10 +105,33 @@ if vsplit:
     plt.show()
 
 
-# test
+# visualisation
+# 1. analytical solution
+x_test = np.zeros((ny*nx, 2))
+surface = np.zeros((ny, nx))
+for i, x in enumerate(x_space):
+    for j, y in enumerate(y_space):
+        x_test[i*nx+j] = [x, y]
+        surface[i][j] = analytic_solution([x, y])
+###
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+X, Y = np.meshgrid(x_space, y_space)
+surf = ax.plot_surface(X, Y, surface, rstride=1, cstride=1, cmap=cm.viridis,
+                       linewidth=0, antialiased=False)
+
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1)
+ax.set_zlim(0, 2)
+
+ax.set_xlabel('$x$')
+ax.set_ylabel('$y$')
+plt.colorbar(surf)
+
+# 2.test solution
 surface_predict = model.predict(x_test).reshape(ny, nx)
 
-### predicted surface
+
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 X, Y = np.meshgrid(x_space, y_space)
@@ -146,7 +146,7 @@ ax.set_xlabel('$x$')
 ax.set_ylabel('$y$')
 plt.colorbar(surf_pdt)
 
-### error surface
+# 3.error surface
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 X, Y = np.meshgrid(x_space, y_space)
@@ -155,8 +155,16 @@ surf_error = ax.plot_surface(X, Y, abs(surface_predict - surface), rstride=1, cs
 
 ax.set_xlim(0, 1)
 ax.set_ylim(0, 1)
-ax.set_zlim(0, 0.1)
+ax.set_zlim(0, 0.01)
 
 ax.set_xlabel('$x$')
 ax.set_ylabel('$y$')
 plt.colorbar(surf_error)
+
+# 4.Plot actual vs prediction for training set
+fig = plt.figure()
+plt.plot(surface.reshape(-1), surface_predict.reshape(-1), 'ro')
+# Compute R-Square value for training set
+from sklearn.metrics import r2_score
+TestR2Value = r2_score(surface.reshape(-1), surface_predict.reshape(-1))
+print("Training Set R-Square=", TestR2Value)
