@@ -10,6 +10,7 @@ from matplotlib import cm
 
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
+from keras.callbacks import ModelCheckpoint
 
 
 def analytic_solution(x):
@@ -42,12 +43,10 @@ x_bc_b = np.asarray([[x, 0] for x in x_space])
 x_bc_t = np.asarray([[x, 1] for x in x_space])
 
 x_train = np.random.rand(int(ntrain / 2), 2)
-# x_train = 1 - x_train
 x_train = np.concatenate((x_train, 1 - x_train))
 x_train = np.concatenate((x_train, x_bc_l, x_bc_r, x_bc_b, x_bc_t))
 
 y_train = [analytic_solution(x) for x in x_train]
-# y_train = np.reshape(np.asarray(y_train), (ntrain+100, -1))
 y_train = np.reshape(np.asarray(y_train), (-1, 1))
 
 ###
@@ -75,30 +74,41 @@ model = Sequential()
 model.add(Dense(100, input_shape=(2,)))
 model.add(Activation('relu'))
 model.add(Dropout(0.))
+
+
 # model.add(Dense(200))
 # model.add(Activation('relu'))
 # model.add(Dropout(0.))
+
 model.add(Dense(100))
 model.add(Activation('relu'))
 model.add(Dropout(0.))
+
 model.add(Dense(100))
 model.add(Activation('relu'))
 model.add(Dropout(0.))
+
 model.add(Dense(1))
 
 from keras import optimizers
-
 adam = optimizers.Adam(lr=0.00001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.99)
+
 model.compile(loss='mse',
               optimizer='adam',
               metrics=['accuracy'])
+# checkpoint
+filepath = "./tmp/weights-improvement-{epoch:02d}-{val_acc:.2e}.hdf5"
+checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min', period=10)
+callbacks_list = [checkpoint]
 
+# fit the model
 history = model.fit(
     x_train, y_train,
     batch_size=batch_size,
     epochs=epochs,
     verbose=1,
-    validation_split=vsplit)
+    validation_split=vsplit,
+    callbacks=callbacks_list)
 # score = model.evaluate(x_test, y_test,
 #                        batch_size=batch_size, verbose=1)
 # print('Test score:', score[0])
