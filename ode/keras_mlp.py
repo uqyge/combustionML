@@ -18,36 +18,18 @@ def analytic_solution(x):
            np.sin(np.pi * x[0]) * (np.exp(np.pi * x[1]) - np.exp(-np.pi * x[1]))
 
 
-ntrain = 512 * 2
 nx = 30
 ny = 30
 
 x_space = np.linspace(0, 1, nx)
 y_space = np.linspace(0, 1, ny)
 
-x_input = np.zeros((ny, nx, 2))
-
+x_test = np.zeros((ny*nx, 2))
 surface = np.zeros((ny, nx))
 for i, x in enumerate(x_space):
     for j, y in enumerate(y_space):
+        x_test[i*nx+j] = [x, y]
         surface[i][j] = analytic_solution([x, y])
-        x_input[i][j] = [x, y]
-
-x_input = x_input.reshape(-1, x_input.shape[-1])
-y_anal = surface.reshape(-1, 1)
-
-print('generate data from analytic solution')
-x_bc_l = np.asarray([[0, y] for y in y_space])
-x_bc_r = np.asarray([[1, y] for y in y_space])
-x_bc_b = np.asarray([[x, 0] for x in x_space])
-x_bc_t = np.asarray([[x, 1] for x in x_space])
-
-x_train = np.random.rand(int(ntrain / 2), 2)
-x_train = np.concatenate((x_train, 1 - x_train))
-x_train = np.concatenate((x_train, x_bc_l, x_bc_r, x_bc_b, x_bc_t))
-
-y_train = [analytic_solution(x) for x in x_train]
-y_train = np.reshape(np.asarray(y_train), (-1, 1))
 
 ###
 fig = plt.figure()
@@ -65,16 +47,31 @@ ax.set_ylabel('$y$')
 plt.colorbar(surf)
 
 ###
+print('generate sample data from analytic solution')
+x_bc_l = np.asarray([[0, y] for y in y_space])
+x_bc_r = np.asarray([[1, y] for y in y_space])
+x_bc_b = np.asarray([[x, 0] for x in x_space])
+x_bc_t = np.asarray([[x, 1] for x in x_space])
+
+n_train = 512 * 2
+
+x_train = np.random.rand(n_train, 2)
+x_train = np.concatenate((x_train, x_bc_l, x_bc_r, x_bc_b, x_bc_t))
+
+y_train = [analytic_solution(x) for x in x_train]
+y_train = np.reshape(np.asarray(y_train), (-1, 1))
+
+
+print('Building model...')
 batch_size = 256 * 2
 epochs = 3000
 vsplit = 0.01
 
-print('Building model...')
+
 model = Sequential()
 model.add(Dense(100, input_shape=(2,)))
 model.add(Activation('relu'))
 model.add(Dropout(0.))
-
 
 # model.add(Dense(200))
 # model.add(Activation('relu'))
@@ -90,14 +87,17 @@ model.add(Dropout(0.))
 
 model.add(Dense(1))
 
+# compile model
 from keras import optimizers
 adam = optimizers.Adam(lr=0.00001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.99)
 
 model.compile(loss='mse',
               optimizer='adam',
               metrics=['accuracy'])
-# checkpoint
-filepath = "./tmp/weights-improvement-{epoch:02d}-{val_acc:.2e}.hdf5"
+
+# checkpoint (save the best model based validate loss)
+# filepath = "./tmp/weights-improvement-{epoch:02d}-{val_loss:.2e}.hdf5"
+filepath = "./tmp/weights.best.hdf5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min', period=10)
 callbacks_list = [checkpoint]
 
@@ -109,21 +109,12 @@ history = model.fit(
     verbose=1,
     validation_split=vsplit,
     callbacks=callbacks_list)
+
 # score = model.evaluate(x_test, y_test,
 #                        batch_size=batch_size, verbose=1)
 # print('Test score:', score[0])
 # print('Test accuracy:', score[1])
 if vsplit:
-    # # summarize history for accuracy
-    # fig = plt.figure()
-    # plt.plot(history.history['acc'])
-    # plt.plot(history.history['val_acc'])
-    # plt.title('model accuracy')
-    # plt.ylabel('accuracy')
-    # plt.xlabel('epoch')
-    # plt.legend(['train', 'test'], loc='upper left')
-    # plt.show()
-
     # summarize history for loss
     fig = plt.figure()
     # plt.plot(history.history['loss'])
@@ -136,15 +127,14 @@ if vsplit:
     plt.legend(['train', 'test'], loc='upper left')
     plt.show()
 
-x_test = x_input + 0.0
-x_test_space = x_test.reshape(ny, nx, 2)[0, :, 1]
-y_test_space = x_test.reshape(ny, nx, 2)[:, 0, 0]
+
+# test
 surface_predict = model.predict(x_test).reshape(ny, nx)
 
 ### predicted surface
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-X, Y = np.meshgrid(x_test_space, y_test_space)
+X, Y = np.meshgrid(x_space, y_space)
 surf_pdt = ax.plot_surface(X, Y, surface_predict, rstride=1, cstride=1, cmap=cm.viridis,
                            linewidth=0, antialiased=False)
 
@@ -159,7 +149,7 @@ plt.colorbar(surf_pdt)
 ### error surface
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-X, Y = np.meshgrid(x_test_space, y_test_space)
+X, Y = np.meshgrid(x_space, y_space)
 surf_error = ax.plot_surface(X, Y, abs(surface_predict - surface), rstride=1, cstride=1, cmap=cm.viridis,
                              linewidth=0, antialiased=False)
 
