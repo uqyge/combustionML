@@ -12,20 +12,20 @@ import numpy as np
 
 print('Building model...')
 model = Sequential()
-model.add(Dense(100, input_shape=(2,)))
+model.add(Dense(200, input_shape=(2,)))
 model.add(Activation('relu'))
 model.add(Dropout(0.))
 
 
-# model.add(Dense(200))
-# model.add(Activation('relu'))
-# model.add(Dropout(0.))
-
-model.add(Dense(100))
+model.add(Dense(200))
 model.add(Activation('relu'))
 model.add(Dropout(0.))
 
-model.add(Dense(100))
+model.add(Dense(200))
+model.add(Activation('relu'))
+model.add(Dropout(0.))
+
+model.add(Dense(200))
 model.add(Activation('relu'))
 model.add(Dropout(0.))
 
