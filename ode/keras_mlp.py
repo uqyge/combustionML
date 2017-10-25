@@ -44,7 +44,7 @@ x_bc_r = np.asarray([[1, y] for y in y_space])
 x_bc_b = np.asarray([[x, 0] for x in x_space])
 x_bc_t = np.asarray([[x, 1] for x in x_space])
 
-n_train = 1024 * 100
+n_train = 1024 * 1000
 
 x_train = np.random.rand(n_train, 2)
 x_train = np.concatenate((x_train, x_bc_l, x_bc_r, x_bc_b, x_bc_t))
