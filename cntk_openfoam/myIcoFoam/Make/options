@@ -1,0 +1,12 @@
+EXE_INC = \
+    -I/cntk/Include \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude
+
+EXE_LIBS = \
+    -L/cntk/cntk/lib \
+    -lCntk.Core-2.2 \
+    -L$(CURDIR)/CNTKLibraryCPPEvalCPUOnlyExamples \
+    -lCNTKLibraryCPPEvalExamples \
+    -lfiniteVolume \
+    -lmeshTools
