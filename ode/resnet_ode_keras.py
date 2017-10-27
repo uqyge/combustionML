@@ -103,6 +103,7 @@ x = Dense(100, activation='relu')(inputs)
 
 x = res_block(x,stage=1,block='a')
 x = res_block(x,stage=2,block='b')
+x = res_block(x,stage=2,block='c')
 
 predictions = Dense(1, activation='linear')(x)
 
