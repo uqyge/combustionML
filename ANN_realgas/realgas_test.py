@@ -4,12 +4,10 @@ from sklearn import preprocessing
 import CoolProp.CoolProp as CP
 
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 
 from keras.models import Sequential, Model
 from keras.layers import Dense, Dropout, Activation, Input
 from keras import layers
-
 from keras.callbacks import ModelCheckpoint
 
 
@@ -26,6 +24,7 @@ def res_block(input_tensor, stage, block):
     return x
 
 
+######################
 print('Generate data ...')
 # vector length
 n_train = 20000
@@ -110,9 +109,15 @@ history = model.fit(T_train, rho_train,
                     callbacks=callbacks_list,
                     shuffle=True)
 
+
+######################
+print('model predict')
 model.load_weights("./tmp/weights.best.hdf5")
 predict = model.predict(T_test)
 
+
+######################
+print('post processing')
 # 1.Plot actual vs prediction for training set
 plt.plot(T_test, predict)
 plt.plot(T_test, rho_test)
