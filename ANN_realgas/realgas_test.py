@@ -38,14 +38,14 @@ def rho_TP_gen(x, fluid):
 print('Generate data ...')
 # n_train = 20000
 nT = 100
-nP = 100
+nP = 1000
 n_train = nT * nP
 
 T_min = 100
 T_max = 160
 
-P_min = 1.
-P_max = 3.
+P_min = 1
+P_max = 2
 
 fluid = 'nitrogen'
 
@@ -81,7 +81,7 @@ T_test = T_scaler.fit_transform(T_vec.reshape(-1, 1))
 print('set up ANN')
 # ANN parameters
 dim = 2
-n_neuron = 100
+n_neuron = 200
 batch_size = 256 * 2
 epochs = 400
 vsplit = 0.1
@@ -142,7 +142,8 @@ print('post processing')
 print('model predict')
 model.load_weights("./tmp/weights.best.hdf5")
 
-test_points = [1.1, 1.5, 2]
+#test_points = [0.6, 0.7, 0.8, 0.9, 1.]
+test_points = [1.02, 1.05, 1.1, 1.2, 1.5]
 rho_predict = []
 rho_test = []
 for x_p in test_points:
