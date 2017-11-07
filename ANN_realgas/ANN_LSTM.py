@@ -48,7 +48,7 @@ rho_norm = rho_vec/rho_max
 #############################
 # ANN parameters
 
-batch_size = 2
+batch_size = 3000
 epochs = 100
 
 in_out_neurons = 1
@@ -66,7 +66,21 @@ model.add(Dense(in_out_neurons,input_dim=200))
 model.add(Activation("linear"))
 model.compile(loss="mean_squared_error", optimizer="rmsprop") #optimizer='adam'
 
+#######################################
+# fit the model
+history = model.fit(T_norm,rho_norm,
+                    epochs=epochs,
+                    batch_size=batch_size,
+                    validation_split=0.1,
+                    verbose=2,
+                    shuffle=True)
 
+predict = model.predict(T_norm)
+
+
+plt.plot(predict)
+plt.plot(rho_norm)
+plt.show()
 #############################
 # plots
 plt.plot(predict)
