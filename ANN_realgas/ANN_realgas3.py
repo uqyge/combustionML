@@ -48,10 +48,10 @@ rho_norm = rho_vec/rho_max
 print('set up ANN')
 ######################
 model = Sequential()
-model.add(Dense(100, activation='relu', input_dim=1, init='uniform'))
+model.add(Dense(100, activation='relu', input_dim=2, init='uniform'))
 model.add(Dense(100, activation='relu', init='uniform'))
 model.add(Dense(100, activation='relu', init='uniform'))
-model.add(Dense(output_dim=1, activation='linear'))
+model.add(Dense(units=1, activation='linear'))
 
 #sgd = SGD(lr=0.05, decay=1e-6, momentum=0.9, nesterov=False)
 #model.compile(loss='mean_squared_error', optimizer='sgd', metrics=['accuracy'])

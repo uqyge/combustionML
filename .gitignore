@@ -1,0 +1,5 @@
+#gitignore
+
+*.csv
+data_trax
+

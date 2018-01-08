@@ -136,13 +136,12 @@ history = model.fit(
 #######################
 fig = plt.figure()
 plt.semilogy(history.history['loss'])
-if vsplit:
+if vsplit
     plt.semilogy(history.history['val_loss'])
 plt.title('mse')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper right')
-
 
 model.load_weights("./weights.best.hdf5")
 

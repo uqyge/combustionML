@@ -48,8 +48,8 @@ rho_norm = rho_vec/rho_max
 #############################
 # ANN parameters
 
-batch_size = 3000
-epochs = 100
+batch_size = 1000
+epochs = 200
 
 in_out_neurons = 1
 hidden_neurons = 300
@@ -58,13 +58,13 @@ hidden_neurons = 300
 
 model = Sequential()
 model.add(LSTM(hidden_neurons, return_sequences=True,  input_shape=(None, in_out_neurons)))
-model.add(LSTM(500, input_dim=300, return_sequences=True))
+model.add(LSTM(300, input_dim=300, return_sequences=True))
 model.add(Dropout(0.2))
-model.add(LSTM(200, input_dim=500, return_sequences=False))
+model.add(LSTM(200, input_dim=300, return_sequences=False))
 model.add(Dropout(0.2))
 model.add(Dense(in_out_neurons,input_dim=200))
 model.add(Activation("linear"))
-model.compile(loss="mean_squared_error", optimizer="rmsprop") #optimizer='adam'
+model.compile(loss="mean_squared_error", optimizer="adam") #optimizer='adam'
 
 #######################################
 # fit the model

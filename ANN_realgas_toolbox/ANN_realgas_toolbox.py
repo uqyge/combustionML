@@ -1,7 +1,9 @@
 import numpy as np
-from sklearn import preprocessing
+import pandas as pd
+from sklearn import preprocessing, model_selection, metrics
 
 import CoolProp.CoolProp as CP
+import os
 
 import matplotlib.pyplot as plt
 #%matplotlib inline
@@ -11,7 +13,10 @@ from keras.layers import Dense, Activation, Input, BatchNormalization, Dropout
 from keras import layers
 from keras.callbacks import ModelCheckpoint
 
-from sklearn.metrics import r2_score
+import xgboost as xgb
+from  sklearn.multioutput import MultiOutputRegressor
+
+
 
 '''
 Environment to work with different ANN architectures and CoolProp 
@@ -23,7 +28,9 @@ class ANN_realgas_toolbox(object):
         self.predictions = None
         self.T_test = None
         self.rho_TP_train = None
-        self.rhoTP_scaler = None
+        self.rhoTP_r = None
+        self.MinMax_X= []
+        self.MinMax_y = []
         self.T_scaler = None
         self.T_P_train = None
         self.rho_vec= None
@@ -41,9 +48,20 @@ class ANN_realgas_toolbox(object):
         self.T_vec = None
         self.p_c = None
         self.T_P_test = None
-        self.rho_predict = None
+        self.predict_y = None
         self.rho_test = None
         self.test_points = None
+        self.data_dict = None
+        self.all_data = None
+        self.X_train=None
+        self.X_test = None
+        self.y_train = None
+        self.y_test = None
+        self.y = None
+        self.X = None
+        self.multiReg=None
+        self.targets = None
+        self.features = None
 
     def rho_TP_gen(self,x, fluid):
         rho = CP.PropsSI('D', 'T', x[0], 'P', x[1], fluid)
@@ -66,6 +84,56 @@ class ANN_realgas_toolbox(object):
         x = Activation('relu')(x)
 
         return x
+
+    def import_data(self,path='data_trax/'):
+        print('Importing the data...')
+        # data files
+        files = os.listdir(path)
+        # check if csv! and sort
+        files = [f for f in files if f[-3:]=='csv']
+        files.sort()
+
+        self.data_dict = {}
+        for file in files:
+            pressure = file[0:2]
+            df = pd.read_csv(path+file)
+            df['p'] = float(pressure)
+            self.data_dict['data_p' + pressure] = df
+
+        del df
+
+        print('Your data dictionary has the following keys: ', self.data_dict.keys())
+        print('Now reshaping to one data frame')
+        keys = list(self.data_dict.keys())
+        keys.sort()
+        self.all_data = self.data_dict[keys[0]]
+        for num in range(1,len(keys)):
+            print(keys[num])
+            df = self.data_dict[keys[num]]
+            #print(df)
+            self.all_data=self.all_data.append(df, ignore_index = True)
+            del df
+
+        print('You have ' + str(len(self.all_data)) + ' data points')
+        use_cols = list(self.all_data.columns)
+        self.all_data = self.all_data[use_cols[1:]]
+
+
+    def scale_split_data(self, features = ['p','he'], targets = ['rho','T','thermo:psi','thermo:mu','thermo:alpha','thermo:as','thermo:Z','Cp']):
+        self.targets = targets
+        self.features = features
+        self.X = self.all_data[features]
+        #self.X = np.array(X)
+        self.y = self.all_data[targets]
+        #self.y = np.array(y)
+
+        self.MinMax_X = preprocessing.MinMaxScaler()
+        self.MinMax_y = preprocessing.MinMaxScaler()
+
+        self.X = self.MinMax_X.fit_transform(self.X)
+        self.y = self.MinMax_y.fit_transform(self.y)
+
+        self.X_train, self.X_test, self.y_train, self.y_test = model_selection.train_test_split(self.X, self.y, test_size=0.3, random_state=42)
 
 
     def genTrainData(self, nT=100, T_min=100, T_max=160, nP=100, P_min=100, P_max=2, fluid='nitrogen'):
@@ -116,9 +184,10 @@ class ANN_realgas_toolbox(object):
 
     ######################################
     # different ANN model types
-    def setResnet(self, indim=2, n_neurons=200, loss='mse',optimizer='adam', batch_norm=False):
+    def setResnet(self, indim=2, n_neurons=200, loss='mse', optimizer='adam', batch_norm=False):
         '''default settings: resnet'''
         ######################
+        outdim = len(self.targets)
         print('set up Resnet ANN')
         self.model = None
 
@@ -131,7 +200,7 @@ class ANN_realgas_toolbox(object):
         x = self.res_block(x, n_neurons, stage=1, block='a', bn=batch_norm)
         x = self.res_block(x, n_neurons, stage=1, block='b', bn=batch_norm)
         # last outout layer with linear activation function
-        self.predictions = Dense(1, activation='linear')(x)
+        self.predictions = Dense(outdim, activation='linear')(x)
 
         self.model = Model(inputs=inputs, outputs=self.predictions)
         self.model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
@@ -151,8 +220,9 @@ class ANN_realgas_toolbox(object):
         self.callbacks_list = [checkpoint]
 
 
-    def setSequential(self, indim=2, hiddenLayer=3,n_neurons=200, loss='mse', optimizer='adam', batch_norm=False):
+    def setSequential(self, indim=2, hiddenLayer=4,n_neurons=200, loss='mse', optimizer='adam', batch_norm=False):
         ######################
+        outdim = len(self.targets)
         print('set up Sequential (MLP) ANN')
         self.model = None
 
@@ -161,7 +231,8 @@ class ANN_realgas_toolbox(object):
         # create the hidden layers
         for l in range(hiddenLayer):
             self.model.add(Dense(n_neurons, init='uniform', activation='relu'))
-        self.model.add(Dense(units=1, activation='linear'))
+        self.model.add(Dropout(0.2))
+        self.model.add(Dense(units=outdim, activation='linear'))
 
         # model.compile(loss='mean_squared_error', optimizer='sgd', metrics=['accuracy'])
         self.model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
@@ -185,7 +256,7 @@ class ANN_realgas_toolbox(object):
         # fit the model
         self.history = self.model.fit(
             # T_train, rho_train,
-            self.T_P_train, self.rho_TP_train,
+            self.X_train, self.y_train,
             epochs=epochs,
             batch_size=batch_size,
             validation_split=vsplit,
@@ -194,25 +265,13 @@ class ANN_realgas_toolbox(object):
             shuffle=True)
 
 
-    def predict(self):
+    def prediction(self):
         # loads the best weights
         self.model.load_weights("./weights.best.hdf5")
 
-        self.rho_predict = []
-        self.rho_test = []
-        try:
-            for x_p in self.test_points:
-                self.T_P_test = np.append(self.T_test, np.ones((len(self.T_test), 1)) * (x_p - self.P_min) / (self.P_max - self.P_min), axis=1)
-                predict = self.model.predict(self.T_P_test)
-                rho_ref = np.asarray([CP.PropsSI('D', 'T', x_T, 'P', x_p * self.p_c, self.fluid) for x_T in self.T_vec])
-                rho_ref = self.rhoTP_scaler.transform(rho_ref.reshape(-1, 1))
+        self.predict_y = self.model.predict(self.X_test)
 
-                self.rho_predict.append(predict)
-                self.rho_test.append(rho_ref)
-        except:
-            print('No test points defined!')
-
-        plt.show(block=False)
+        #plt.show(block=False)
 
 
     def plotLoss(self):
@@ -245,12 +304,10 @@ class ANN_realgas_toolbox(object):
     def plotAccuraccy(self):
         #######################
         # 2.L2 accuracy plot
-        # Compute R-Square value for training set
+        # Compute R-Square value for test set
         #######################
 
-        a = np.asarray(self.rho_predict).reshape(-1, 1)
-        b = np.asarray(self.rho_test).reshape(-1, 1)
-        TestR2Value = r2_score(a, b)
+        TestR2Value = metrics.r2_score(self.predict_y,self.y_test)
         print("Training Set R-Square=", TestR2Value)
 
         fig = plt.figure(3)
@@ -260,13 +317,62 @@ class ANN_realgas_toolbox(object):
         plt.show(block=False)
 
 
-    def setTestPoints(self,vector=[1.02 ,1.05, 1.1,1.2,1.5], random= False, points = 5):
+    def plotTest(self, pressure = 20., target = 'T'):
+        # resacle your data
+        y_test_rescaled = self.MinMax_y.inverse_transform(self.y_test)
+        X_test_rescaled = self.MinMax_X.inverse_transform(self.X_test)
+        predict_rescaled = self.MinMax_y.inverse_transform(self.predict_y)
 
-        if random:
-            self.test_points = np.random.random(points)
+        # sort your X data according to ascending pressure
+        sort_id = np.argsort(X_test_rescaled[:,0])
+        y_sorted = y_test_rescaled[sort_id[::]]
+        X_sorted = X_test_rescaled[sort_id[::]]
+        predict_sorted = predict_rescaled[sort_id[::]]
+        print(predict_sorted)
 
-        else:
-            self.test_points = vector
+        vals = pressure
+        ix = np.isin(X_sorted[:,0], vals)
+        index = np.where(ix)
+        index=index[:][0]
+        print(index)
+
+        column_list = list(self.targets)
+
+        # find the index of the target label
+        target_id=[ind for ind, x in enumerate(column_list) if x==target]
+        target_id = target_id[0]
+        print(target_id)
+
+        y_for_plot = y_sorted[index,target_id]
+        predict_for_plot = predict_sorted[index, target_id]
+        print(predict_for_plot)
+
+        y_for_plot.sort()
+        predict_for_plot.sort()
+
+        plt.figure(10)
+        plt.title('Compare prediction and y_test for field: '+target)
+        plt.plot(y_for_plot, '*')
+        plt.plot(predict_for_plot, '*')
+        plt.legend(['y_test','predict'])
+        plt.show(block=False)
+
+
+    # XGBoost classifier!
+    def xgboost(self,depth = 7):
+        tuned_params = {"objective":"reg:linear",'colsample_bytree': 0.3, 'learning_rate': 0.1, 'max_depth': depth }
+        self.multiReg = MultiOutputRegressor(xgb.XGBRegressor(objective='reg:linear', params = tuned_params))
+        self.multiReg.fit(self.X_train,self.y_train)
+        self.predict_y = self.multiReg.predict(self.X_test)
+        score = metrics.r2_score(self.predict_y, self.y_test)
+        print('The R2 score from XGBoost is: ',score)
+
+
+
+
+
+
+
 
 
 
