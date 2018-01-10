@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
+from datetime import datetime
 from sklearn import preprocessing, model_selection, metrics
 
 import CoolProp.CoolProp as CP
 import os
+from shutil import copyfile
 
 import matplotlib.pyplot as plt
 #%matplotlib inline
@@ -11,10 +13,10 @@ import matplotlib.pyplot as plt
 from keras.models import Model, Sequential
 from keras.layers import Dense, Activation, Input, BatchNormalization, Dropout
 from keras import layers
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 
 import xgboost as xgb
-from  sklearn.multioutput import MultiOutputRegressor
+from sklearn.multioutput import MultiOutputRegressor
 
 
 
@@ -62,10 +64,12 @@ class ANN_realgas_toolbox(object):
         self.multiReg=None
         self.targets = None
         self.features = None
+        self.best_set = []
+        self.best_model = None
 
-    def rho_TP_gen(self,x, fluid):
-        rho = CP.PropsSI('D', 'T', x[0], 'P', x[1], fluid)
-        return rho
+    # def rho_TP_gen(self,x, fluid):
+    #     rho = CP.PropsSI('D', 'T', x[0], 'P', x[1], fluid)
+    #     return rho
 
     def res_block(self,input_tensor, n_neuron, stage, block, bn=False):
         ''' creates a resnet (Deep Residual Learning) '''
@@ -136,51 +140,51 @@ class ANN_realgas_toolbox(object):
         self.X_train, self.X_test, self.y_train, self.y_test = model_selection.train_test_split(self.X, self.y, test_size=0.3, random_state=42)
 
 
-    def genTrainData(self, nT=100, T_min=100, T_max=160, nP=100, P_min=100, P_max=2, fluid='nitrogen'):
-        ''' 
-        Generates the test data from coolprop. 
-        input: nT, T_min, T_max, np, P_min, P_max and the fluid
-        '''
-        ######################
-        self.fluid= fluid
-        self.P_max = P_max
-        self.P_min = P_min
-        self.nP = nP
-        self.T_max = T_max
-        self.T_min = T_min
-        self.nT = nT
-
-        print('Generate data ...')
-        # n_train = 20000
-
-        n_train = nT * nP
-
-        # get critical pressure
-        self.p_c = CP.PropsSI(fluid, 'pcrit')
-
-        self.p_vec = np.linspace(1, 3, nP) * self.p_c
-        self.T_vec = np.linspace(T_min, T_max, nT)
-        self.rho_vec = np.asarray([CP.PropsSI('D', 'T', x, 'P', 1.1 * self.p_c, fluid) for x in self.T_vec])
-
-        # prepare input
-        # rho = f(T, P)
-        # 1. uniform random
-        self.T_P_train = np.random.rand(n_train, 2)
-        # 2. family curves
-        # T_P_train = np.random.rand(n_train, 1)
-        # tmp = np.ones((nT, nP))* np.linspace(0, 1, nP)
-        # T_P_train = np.append(T_P_train, tmp.reshape(-1, 1), axis=1)
-
-        self.rho_TP_train = np.asarray(
-            [self.rho_TP_gen(x, fluid) for x in (self.T_P_train * [(self.T_max - self.T_min), (self.P_max - self.P_min) * self.p_c] + [self.T_min, self.p_c])])
-
-        # normalize train data
-        self.rhoTP_scaler = preprocessing.MinMaxScaler()
-        self.rho_TP_train = self.rhoTP_scaler.fit_transform(self.rho_TP_train.reshape(-1, 1))
-
-        # normalize test data
-        self.T_scaler = preprocessing.MinMaxScaler()
-        self.T_test = self.T_scaler.fit_transform(self.T_vec.reshape(-1, 1))
+    # def genTrainData(self, nT=100, T_min=100, T_max=160, nP=100, P_min=100, P_max=2, fluid='nitrogen'):
+    #     '''
+    #     Generates the test data from coolprop.
+    #     input: nT, T_min, T_max, np, P_min, P_max and the fluid
+    #     '''
+    #     ######################
+    #     self.fluid= fluid
+    #     self.P_max = P_max
+    #     self.P_min = P_min
+    #     self.nP = nP
+    #     self.T_max = T_max
+    #     self.T_min = T_min
+    #     self.nT = nT
+    #
+    #     print('Generate data ...')
+    #     # n_train = 20000
+    #
+    #     n_train = nT * nP
+    #
+    #     # get critical pressure
+    #     self.p_c = CP.PropsSI(fluid, 'pcrit')
+    #
+    #     self.p_vec = np.linspace(1, 3, nP) * self.p_c
+    #     self.T_vec = np.linspace(T_min, T_max, nT)
+    #     self.rho_vec = np.asarray([CP.PropsSI('D', 'T', x, 'P', 1.1 * self.p_c, fluid) for x in self.T_vec])
+    #
+    #     # prepare input
+    #     # rho = f(T, P)
+    #     # 1. uniform random
+    #     self.T_P_train = np.random.rand(n_train, 2)
+    #     # 2. family curves
+    #     # T_P_train = np.random.rand(n_train, 1)
+    #     # tmp = np.ones((nT, nP))* np.linspace(0, 1, nP)
+    #     # T_P_train = np.append(T_P_train, tmp.reshape(-1, 1), axis=1)
+    #
+    #     self.rho_TP_train = np.asarray(
+    #         [self.rho_TP_gen(x, fluid) for x in (self.T_P_train * [(self.T_max - self.T_min), (self.P_max - self.P_min) * self.p_c] + [self.T_min, self.p_c])])
+    #
+    #     # normalize train data
+    #     self.rhoTP_scaler = preprocessing.MinMaxScaler()
+    #     self.rho_TP_train = self.rhoTP_scaler.fit_transform(self.rho_TP_train.reshape(-1, 1))
+    #
+    #     # normalize test data
+    #     self.T_scaler = preprocessing.MinMaxScaler()
+    #     self.T_test = self.T_scaler.fit_transform(self.T_vec.reshape(-1, 1))
 
     ######################################
     # different ANN model types
@@ -249,11 +253,13 @@ class ANN_realgas_toolbox(object):
                                      save_best_only=True,
                                      mode='min',
                                      period=10)
-        self.callbacks_list = [checkpoint]
+        early_stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=100, verbose=1, mode='min')
+        self.callbacks_list = [checkpoint, early_stop]
 
 
     def fitModel(self, batch_size=1024, epochs=400, vsplit=0.1):
         # fit the model
+        a = datetime.now()
         self.history = self.model.fit(
             # T_train, rho_train,
             self.X_train, self.y_train,
@@ -263,6 +269,9 @@ class ANN_realgas_toolbox(object):
             verbose=2,
             callbacks=self.callbacks_list,
             shuffle=True)
+        b = datetime.now()
+        c = b-a
+        print('The training took: ' + str(int(c.total_seconds()))+' seconds.')
 
 
     def prediction(self):
@@ -271,7 +280,6 @@ class ANN_realgas_toolbox(object):
 
         self.predict_y = self.model.predict(self.X_test)
 
-        #plt.show(block=False)
 
 
     def plotLoss(self):
@@ -289,35 +297,50 @@ class ANN_realgas_toolbox(object):
         plt.show(block=False)
 
 
-    def plotPredict(self):
-        #######################
-        # 1.Plot actual vs prediction for training set
-        #######################
-        fig = plt.figure(2)
-        for prdt, ref in zip(self.rho_predict, self.rho_test):
-            plt.plot(self.T_scaler.inverse_transform(self.T_test), self.rhoTP_scaler.inverse_transform(prdt), 'b-')
-            plt.plot(self.T_scaler.inverse_transform(self.T_test), self.rhoTP_scaler.inverse_transform(ref), 'r:')
-        plt.legend(['predict', 'CoolProp'], loc='upper right')
-        plt.title(self.test_points)
-        plt.show(block=False)
+    # def plotPredict(self):
+    #     #######################
+    #     # 1.Plot actual vs prediction for training set
+    #     #######################
+    #     fig = plt.figure(2)
+    #     for prdt, ref in zip(self.rho_predict, self.rho_test):
+    #         plt.plot(self.T_scaler.inverse_transform(self.T_test), self.rhoTP_scaler.inverse_transform(prdt), 'b-')
+    #         plt.plot(self.T_scaler.inverse_transform(self.T_test), self.rhoTP_scaler.inverse_transform(ref), 'r:')
+    #     plt.legend(['predict', 'CoolProp'], loc='upper right')
+    #     plt.title(self.test_points)
+    #     plt.show(block=False)
 
-    def plotAccuraccy(self):
+    def plotAccuracy(self, target = 'rho', all = False):
         #######################
         # 2.L2 accuracy plot
         # Compute R-Square value for test set
         #######################
+        column_list = list(self.targets)
 
-        TestR2Value = metrics.r2_score(self.predict_y,self.y_test)
-        print("Training Set R-Square=", TestR2Value)
+        if all:
+            for i, tar in enumerate(column_list):
+                TestR2Value = metrics.r2_score(self.predict_y[:, i], self.y_test[:, i])
+                print("Training Set R-Square=", TestR2Value)
 
-        fig = plt.figure(3)
-        plt.plot(a, b, 'k^', ms=3, mfc='none')
-        plt.title('R2 =' + str(TestR2Value))
+                fig = plt.figure(100+i)
+                plt.plot(self.predict_y[:, i], self.y_test[:, i], 'k^', ms=3, mfc='none')
+                plt.title('R2 =' + str(TestR2Value) + 'for: '+tar)
+
+        else:
+
+            target_id = [ind for ind, x in enumerate(column_list) if x == target]
+            target_id = target_id[0]
+
+            TestR2Value = metrics.r2_score(self.predict_y[:, target_id], self.y_test[:, target_id])
+            print("Training Set R-Square=", TestR2Value)
+
+            fig = plt.figure(3)
+            plt.plot(self.predict_y[:, target_id], self.y_test[:, target_id], 'k^', ms=3, mfc='none')
+            plt.title('R2 =' + str(TestR2Value))
 
         plt.show(block=False)
 
 
-    def plotTest(self, pressure = 20., target = 'T'):
+    def plotPredict(self, pressure = 20., target = 'T'):
         # resacle your data
         y_test_rescaled = self.MinMax_y.inverse_transform(self.y_test)
         X_test_rescaled = self.MinMax_X.inverse_transform(self.X_test)
@@ -357,10 +380,45 @@ class ANN_realgas_toolbox(object):
         plt.legend(['y_test','predict'])
         plt.show(block=False)
 
+    # performs parametric search for the Sequential model
+    def gridSearchSequential(self, neurons = [50,100,200,400], layers = [2,3,4,5,6], epochs = [100,200,500], batch= [100,200,500,1000],loss_func = ['mse']):
+
+        best_score = 999999
+        for n in neurons:
+            for l in layers:
+                for lossf in loss_func:
+                    self.setSequential(indim=2, hiddenLayer=l, loss=lossf)
+                    for e in epochs:
+                        for b in batch:
+                            try:
+                                self.model.load_weights("./weights.best.hdf5")
+                            except:
+                                print('No weights yet')
+                            # fit the model and apply it to the test set
+                            self.fitModel(batch_size=b, epochs=e)
+                            self.prediction()
+                            R2 = abs(metrics.r2_score(self.predict_y,self.y_test))
+                            mse = abs(metrics.mean_squared_error(self.predict_y,self.y_test))
+                            print('')
+                            print('R2 is: ', R2)
+                            print('MSE is: ', mse)
+                            #save the best set according to R2 value
+                            if mse < best_score:
+                                # store the best combination of parameters
+                                self.best_set = [n, l, e,b,lossf]
+                                best_score= mse#R2
+                                self.best_model = self.model
+                                # store the best weights separately
+                                copyfile("./weights.best.hdf5","./weights.best_R2.hdf5")
+        print(' ')
+        print('best metrics score: ', best_score)
+
+
+
 
     # XGBoost classifier!
     def xgboost(self,depth = 7):
-        tuned_params = {"objective":"reg:linear",'colsample_bytree': 0.3, 'learning_rate': 0.1, 'max_depth': depth }
+        tuned_params = {"objective":"reg:linear",'colsample_bytree': 0.3, 'learning_rate': 0.1, 'max_depth': depth}
         self.multiReg = MultiOutputRegressor(xgb.XGBRegressor(objective='reg:linear', params = tuned_params))
         self.multiReg.fit(self.X_train,self.y_train)
         self.predict_y = self.multiReg.predict(self.X_test)
