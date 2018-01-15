@@ -15,14 +15,8 @@ ANN.import_data()
 #ANN.prediction()
 ANN.scale_split_data()
 start = datetime.datetime.now()
-ANN.gridSearchSequential(epochs = [400], batch= [500],loss_func = ['mse','mae','mape','msle','squared_hinge','hinge','categorical_hinge','logcosh','kullback_leibler_divergence','poisson','cosine_proximity'])
+ANN.gridSearchResNet()
 end = datetime.datetime.now()
 
 ANN.plotAccuracy(target='Cp')
 
-#set up the Resnet ANN
-# ANN.setResnet()
-# ANN.fitModel(batch_size=1000, epochs=400)
-# ANN.predict()
-# ANN.plotPredict()
-# ANN.plotLoss()

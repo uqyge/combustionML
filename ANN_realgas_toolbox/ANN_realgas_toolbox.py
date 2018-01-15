@@ -19,7 +19,6 @@ import xgboost as xgb
 from sklearn.multioutput import MultiOutputRegressor
 
 
-
 '''
 Environment to work with different ANN architectures and CoolProp 
 '''
@@ -28,30 +27,31 @@ class ANN_realgas_toolbox(object):
     def __init__(self):
         self.history = None
         self.predictions = None
-        self.T_test = None
-        self.rho_TP_train = None
-        self.rhoTP_r = None
+       # self.T_test = None
+       # self.rho_TP_train = None
+       # self.rhoTP_r = None
         self.MinMax_X= []
         self.MinMax_y = []
-        self.T_scaler = None
-        self.T_P_train = None
-        self.rho_vec= None
-        self.p_vec = None
+       # self.T_scaler = None
+       # self.T_P_train = None
+       # self.rho_vec= None
+       # self.p_vec = None
         self.model = None
         self.predictions = None
         self.callbacks_list = None
-        self.fluid= None
-        self.P_max = None
-        self.P_min = None
-        self.nP = None
-        self.T_max = None
-        self.T_min = None
-        self.nT = None
-        self.T_vec = None
-        self.p_c = None
-        self.T_P_test = None
+        #self.fluid= None
+        #self.P_max = None
+        #self.P_min = None
+        #self.nP = None
+        #self.T_max = None
+        #self.T_min = None
+        #self.nT = None
+        #
+        # self.T_vec = None
+        #self.p_c = None
+        #self.T_P_test = None
         self.predict_y = None
-        self.rho_test = None
+        #self.rho_test = None
         self.test_points = None
         self.data_dict = None
         self.all_data = None
@@ -66,10 +66,9 @@ class ANN_realgas_toolbox(object):
         self.features = None
         self.best_set = []
         self.best_model = None
+        self.predict_for_plot = None
+        self.y_for_plot = None
 
-    # def rho_TP_gen(self,x, fluid):
-    #     rho = CP.PropsSI('D', 'T', x[0], 'P', x[1], fluid)
-    #     return rho
 
     def res_block(self,input_tensor, n_neuron, stage, block, bn=False):
         ''' creates a resnet (Deep Residual Learning) '''
@@ -188,12 +187,13 @@ class ANN_realgas_toolbox(object):
 
     ######################################
     # different ANN model types
-    def setResnet(self, indim=2, n_neurons=200, loss='mse', optimizer='adam', batch_norm=False):
+    def setResnet(self, indim=2, n_neurons=200, blocks = 2, loss='mse', optimizer='adam', batch_norm=False):
         '''default settings: resnet'''
         ######################
         outdim = len(self.targets)
         print('set up Resnet ANN')
         self.model = None
+        alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 
         # This returns a tensor
         inputs = Input(shape=(indim,))
@@ -201,8 +201,9 @@ class ANN_realgas_toolbox(object):
         # a layer instance is callable on a tensor, and returns a tensor
         x = Dense(n_neurons, activation='relu')(inputs)
         # less then 2 res_block, there will be variance
-        x = self.res_block(x, n_neurons, stage=1, block='a', bn=batch_norm)
-        x = self.res_block(x, n_neurons, stage=1, block='b', bn=batch_norm)
+        for b in range(blocks):
+            x = self.res_block(x, n_neurons, stage=1, block=alphabet[b], bn=batch_norm)
+            #x = self.res_block(x, n_neurons, stage=1, block='b', bn=batch_norm)
         # last outout layer with linear activation function
         self.predictions = Dense(outdim, activation='linear')(x)
 
@@ -221,7 +222,8 @@ class ANN_realgas_toolbox(object):
                                      save_best_only=True,
                                      mode='min',
                                      period=10)
-        self.callbacks_list = [checkpoint]
+        early_stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=100, verbose=1, mode='min')
+        self.callbacks_list = [checkpoint,early_stop]
 
 
     def setSequential(self, indim=2, hiddenLayer=4,n_neurons=200, loss='mse', optimizer='adam', batch_norm=False):
@@ -232,6 +234,7 @@ class ANN_realgas_toolbox(object):
 
         self.model = Sequential()
         self.model.add(Dense(n_neurons, input_dim= indim, activation='relu'))
+
         # create the hidden layers
         for l in range(hiddenLayer):
             self.model.add(Dense(n_neurons, init='uniform', activation='relu'))
@@ -279,7 +282,6 @@ class ANN_realgas_toolbox(object):
         self.model.load_weights("./weights.best.hdf5")
 
         self.predict_y = self.model.predict(self.X_test)
-
 
 
     def plotLoss(self):
@@ -331,7 +333,7 @@ class ANN_realgas_toolbox(object):
             target_id = target_id[0]
 
             TestR2Value = metrics.r2_score(self.predict_y[:, target_id], self.y_test[:, target_id])
-            print("Training Set R-Square=", TestR2Value)
+            print("Test Set R-Square=", TestR2Value)
 
             fig = plt.figure(3)
             plt.plot(self.predict_y[:, target_id], self.y_test[:, target_id], 'k^', ms=3, mfc='none')
@@ -366,17 +368,17 @@ class ANN_realgas_toolbox(object):
         target_id = target_id[0]
         print(target_id)
 
-        y_for_plot = y_sorted[index,target_id]
-        predict_for_plot = predict_sorted[index, target_id]
-        print(predict_for_plot)
+        self.y_for_plot = y_sorted[index,target_id]
+        self.predict_for_plot = predict_sorted[index, target_id]
+        print(self.predict_for_plot)
 
-        y_for_plot.sort()
-        predict_for_plot.sort()
+        self.y_for_plot.sort()
+        self.predict_for_plot.sort()
 
         plt.figure(10)
         plt.title('Compare prediction and y_test for field: '+target)
-        plt.plot(y_for_plot, '*')
-        plt.plot(predict_for_plot, '*')
+        plt.plot(self.y_for_plot, '*')
+        plt.plot(self.predict_for_plot, '*')
         plt.legend(['y_test','predict'])
         plt.show(block=False)
 
@@ -413,6 +415,38 @@ class ANN_realgas_toolbox(object):
         print(' ')
         print('best metrics score: ', best_score)
 
+    # performs parametric search for the Sequential model
+    def gridSearchResNet(self, neurons = [200,400,600], layers = [3,4,5], epochs = [500,600,800], batch= [1000,2000], loss_func = ['mse']):
+
+        best_score = 999999
+        for n in neurons:
+            for l in layers:
+                for lossf in loss_func:
+                    self.setResnet(indim=2, n_neurons=n, blocks=l, batch_norm=True)
+                    for e in epochs:
+                        for b in batch:
+                            try:
+                                self.model.load_weights("./weights.best.hdf5")
+                            except:
+                                print('No weights yet')
+                            # fit the model and apply it to the test set
+                            self.fitModel(batch_size=b, epochs=e)
+                            self.prediction()
+                            R2 = abs(metrics.r2_score(self.predict_y,self.y_test))
+                            mse = abs(metrics.mean_squared_error(self.predict_y,self.y_test))
+                            print('')
+                            print('R2 is: ', R2)
+                            print('MSE is: ', mse)
+                            #save the best set according to R2 value
+                            if mse < best_score:
+                                # store the best combination of parameters
+                                self.best_set = [n, l, e,b,lossf]
+                                best_score= mse#R2
+                                self.best_model = self.model
+                                # store the best weights separately
+                                copyfile("./weights.best.hdf5","./weights.best_R2.hdf5")
+        print(' ')
+        print('best metrics score: ', best_score)
 
 
 
