@@ -27,29 +27,10 @@ class ANN_realgas_toolbox(object):
     def __init__(self):
         self.history = None
         self.predictions = None
-       # self.T_test = None
-       # self.rho_TP_train = None
-       # self.rhoTP_r = None
         self.MinMax_X= []
-        self.MinMax_y = []
-       # self.T_scaler = None
-       # self.T_P_train = None
-       # self.rho_vec= None
-       # self.p_vec = None
         self.model = None
         self.predictions = None
         self.callbacks_list = None
-        #self.fluid= None
-        #self.P_max = None
-        #self.P_min = None
-        #self.nP = None
-        #self.T_max = None
-        #self.T_min = None
-        #self.nT = None
-        #
-        # self.T_vec = None
-        #self.p_c = None
-        #self.T_P_test = None
         self.predict_y = None
         #self.rho_test = None
         self.test_points = None
@@ -139,52 +120,6 @@ class ANN_realgas_toolbox(object):
         self.X_train, self.X_test, self.y_train, self.y_test = model_selection.train_test_split(self.X, self.y, test_size=0.3, random_state=42)
 
 
-    # def genTrainData(self, nT=100, T_min=100, T_max=160, nP=100, P_min=100, P_max=2, fluid='nitrogen'):
-    #     '''
-    #     Generates the test data from coolprop.
-    #     input: nT, T_min, T_max, np, P_min, P_max and the fluid
-    #     '''
-    #     ######################
-    #     self.fluid= fluid
-    #     self.P_max = P_max
-    #     self.P_min = P_min
-    #     self.nP = nP
-    #     self.T_max = T_max
-    #     self.T_min = T_min
-    #     self.nT = nT
-    #
-    #     print('Generate data ...')
-    #     # n_train = 20000
-    #
-    #     n_train = nT * nP
-    #
-    #     # get critical pressure
-    #     self.p_c = CP.PropsSI(fluid, 'pcrit')
-    #
-    #     self.p_vec = np.linspace(1, 3, nP) * self.p_c
-    #     self.T_vec = np.linspace(T_min, T_max, nT)
-    #     self.rho_vec = np.asarray([CP.PropsSI('D', 'T', x, 'P', 1.1 * self.p_c, fluid) for x in self.T_vec])
-    #
-    #     # prepare input
-    #     # rho = f(T, P)
-    #     # 1. uniform random
-    #     self.T_P_train = np.random.rand(n_train, 2)
-    #     # 2. family curves
-    #     # T_P_train = np.random.rand(n_train, 1)
-    #     # tmp = np.ones((nT, nP))* np.linspace(0, 1, nP)
-    #     # T_P_train = np.append(T_P_train, tmp.reshape(-1, 1), axis=1)
-    #
-    #     self.rho_TP_train = np.asarray(
-    #         [self.rho_TP_gen(x, fluid) for x in (self.T_P_train * [(self.T_max - self.T_min), (self.P_max - self.P_min) * self.p_c] + [self.T_min, self.p_c])])
-    #
-    #     # normalize train data
-    #     self.rhoTP_scaler = preprocessing.MinMaxScaler()
-    #     self.rho_TP_train = self.rhoTP_scaler.fit_transform(self.rho_TP_train.reshape(-1, 1))
-    #
-    #     # normalize test data
-    #     self.T_scaler = preprocessing.MinMaxScaler()
-    #     self.T_test = self.T_scaler.fit_transform(self.T_vec.reshape(-1, 1))
-
     ######################################
     # different ANN model types
     def setResnet(self, indim=2, n_neurons=200, blocks = 2, loss='mse', optimizer='adam', batch_norm=False):
@@ -266,8 +201,8 @@ class ANN_realgas_toolbox(object):
         self.history = self.model.fit(
             # T_train, rho_train,
             self.X_train, self.y_train,
-            epochs=epochs,
-            batch_size=batch_size,
+            epochs=int(epochs),
+            batch_size=int(batch_size),
             validation_split=vsplit,
             verbose=2,
             callbacks=self.callbacks_list,
@@ -325,7 +260,7 @@ class ANN_realgas_toolbox(object):
 
                 fig = plt.figure(100+i)
                 plt.plot(self.predict_y[:, i], self.y_test[:, i], 'k^', ms=3, mfc='none')
-                plt.title('R2 =' + str(TestR2Value) + 'for: '+tar)
+                plt.title('R2 = ' + str(round(TestR2Value,5)) + ' for: '+tar)
 
         else:
 
@@ -337,12 +272,12 @@ class ANN_realgas_toolbox(object):
 
             fig = plt.figure(3)
             plt.plot(self.predict_y[:, target_id], self.y_test[:, target_id], 'k^', ms=3, mfc='none')
-            plt.title('R2 =' + str(TestR2Value))
+            plt.title('R2 =' + str(round(TestR2Value,5)) + ' for '+target)
 
         plt.show(block=False)
 
 
-    def plotPredict(self, pressure = 20., target = 'T'):
+    def plotPredict(self, pressure = 40., target = 'T'):
         # resacle your data
         y_test_rescaled = self.MinMax_y.inverse_transform(self.y_test)
         X_test_rescaled = self.MinMax_X.inverse_transform(self.X_test)
@@ -353,24 +288,24 @@ class ANN_realgas_toolbox(object):
         y_sorted = y_test_rescaled[sort_id[::]]
         X_sorted = X_test_rescaled[sort_id[::]]
         predict_sorted = predict_rescaled[sort_id[::]]
-        print(predict_sorted)
+        #print(predict_sorted)
 
         vals = pressure
         ix = np.isin(X_sorted[:,0], vals)
         index = np.where(ix)
         index=index[:][0]
-        print(index)
+        #print(index)
 
         column_list = list(self.targets)
 
         # find the index of the target label
         target_id=[ind for ind, x in enumerate(column_list) if x==target]
         target_id = target_id[0]
-        print(target_id)
+        #print(target_id)
 
         self.y_for_plot = y_sorted[index,target_id]
         self.predict_for_plot = predict_sorted[index, target_id]
-        print(self.predict_for_plot)
+        #print(self.predict_for_plot)
 
         self.y_for_plot.sort()
         self.predict_for_plot.sort()
@@ -383,13 +318,13 @@ class ANN_realgas_toolbox(object):
         plt.show(block=False)
 
     # performs parametric search for the Sequential model
-    def gridSearchSequential(self, neurons = [50,100,200,400], layers = [2,3,4,5,6], epochs = [100,200,500], batch= [100,200,500,1000],loss_func = ['mse']):
+    def gridSearchSequential(self, neurons = [200,400,500], layers = [6,10,20], epochs = [100,200,500], batch= [500,1000],loss_func = ['mse']):
 
         best_score = 999999
         for n in neurons:
             for l in layers:
                 for lossf in loss_func:
-                    self.setSequential(indim=2, hiddenLayer=l, loss=lossf)
+                    self.setSequential(indim=2, n_neurons=n, hiddenLayer=l, loss=lossf)
                     for e in epochs:
                         for b in batch:
                             try:
