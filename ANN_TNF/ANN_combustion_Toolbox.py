@@ -1,8 +1,9 @@
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 from sklearn import preprocessing, metrics
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 #%matplotlib inline
 
 from keras.models import Model, Sequential
@@ -72,15 +73,28 @@ class ANN_combustion_Toolbox(object):
         self.MinMax_X = preprocessing.MinMaxScaler()
         self.MinMax_y = preprocessing.MinMaxScaler()
 
+        #self.MinMax_X = preprocessing.StandardScaler()
+        #self.MinMax_y = preprocessing.StandardScaler()
+
         self.Train_inp = self.Train_inp[self.features]
         self.Test_inp = self.Test_inp[self.features]
         self.Train_out = self.Train_out[self.targets]
         self.Test_out = self.Test_out[self.targets]
 
-        self.X_train = self.MinMax_X.fit_transform(self.Train_inp)
-        self.X_test = self.MinMax_X.fit_transform(self.Test_inp)
-        self.y_train = self.MinMax_y.fit_transform(self.Train_out)
-        self.y_test = self.MinMax_y.fit_transform(self.Test_out)
+        # fit the scalers to the whole data
+        X_data = self.Train_inp.copy()
+        X_data = X_data.append(self.Test_inp)
+
+        y_data = self.Train_out.copy()
+        y_data = y_data.append(self.Test_out)
+
+        self.MinMax_X.fit(X_data)
+        self.MinMax_y.fit(y_data)
+
+        self.X_train = self.MinMax_X.transform(self.Train_inp)
+        self.X_test = self.MinMax_X.transform(self.Test_inp)
+        self.y_train = self.MinMax_y.transform(self.Train_out)
+        self.y_test = self.MinMax_y.transform(self.Test_out)
 
         #self.X_train, self.X_test, self.y_train, self.y_test = model_selection.train_test_split(self.X, self.y, test_size=0.3, random_state=42)
 
@@ -125,17 +139,20 @@ class ANN_combustion_Toolbox(object):
         self.callbacks_list = [checkpoint, early_stop]
 
 
-    def setSequential(self,  hiddenLayer=5,n_neurons=200, loss='mse', optimizer='adam', batch_norm=False):
+    def setSequential(self, indim=2, hiddenLayer=4,n_neurons=200, loss='mse', optimizer='adam', batch_norm=False):
         ######################
+        outdim = len(self.targets)
         print('set up Sequential (MLP) ANN')
         self.model = None
 
         self.model = Sequential()
-        self.model.add(Dense(n_neurons, input_dim= len(self.features), activation='relu'))
+        self.model.add(Dense(n_neurons, input_dim= indim, activation='relu'))
+
         # create the hidden layers
         for l in range(hiddenLayer):
-            self.model.Dense(n_neurons, activation="relu", kernel_initializer="uniform")
-        self.model.add(Dense(units=len(self.targets), activation='linear'))
+            self.model.add(Dense(n_neurons, init='uniform', activation='relu'))
+        self.model.add(Dropout(0.2))
+        self.model.add(Dense(units=outdim, activation='linear'))
 
         # model.compile(loss='mean_squared_error', optimizer='sgd', metrics=['accuracy'])
         self.model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
@@ -152,10 +169,11 @@ class ANN_combustion_Toolbox(object):
                                      save_best_only=True,
                                      mode='min',
                                      period=10)
-        self.callbacks_list = [checkpoint]
+        early_stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=100, verbose=1, mode='min')
+        self.callbacks_list = [checkpoint, early_stop]
 
 
-    def fitModel(self, batch_size=1024, epochs=400, vsplit=0.1):
+    def fitModel(self, batch_size=1024, epochs=400, vsplit=0.1,  shuffle=True):
         # fit the model
         try:
             self.history = self.model.fit(

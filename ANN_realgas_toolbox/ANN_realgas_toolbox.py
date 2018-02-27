@@ -17,7 +17,7 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping
 
 import xgboost as xgb
 from sklearn.multioutput import MultiOutputRegressor
-
+import cntk
 
 '''
 Environment to work with different ANN architectures and CoolProp 
@@ -27,7 +27,7 @@ class ANN_realgas_toolbox(object):
     def __init__(self):
         self.history = None
         self.predictions = None
-        self.MinMax_X= []
+        self.MinMax_X = []
         self.model = None
         self.predictions = None
         self.callbacks_list = None
@@ -36,19 +36,21 @@ class ANN_realgas_toolbox(object):
         self.test_points = None
         self.data_dict = None
         self.all_data = None
-        self.X_train=None
+        self.X_train = None
         self.X_test = None
         self.y_train = None
         self.y_test = None
         self.y = None
         self.X = None
-        self.multiReg=None
+        self.multiReg = None
         self.targets = None
         self.features = None
         self.best_set = []
         self.best_model = None
         self.predict_for_plot = None
         self.y_for_plot = None
+        self.X_test_for_plot = None
+        self.T_for_X = None
 
 
     def res_block(self,input_tensor, n_neuron, stage, block, bn=False):
@@ -305,16 +307,16 @@ class ANN_realgas_toolbox(object):
 
         self.y_for_plot = y_sorted[index,target_id]
         self.predict_for_plot = predict_sorted[index, target_id]
-        #print(self.predict_for_plot)
-
-        self.y_for_plot.sort()
-        self.predict_for_plot.sort()
+        self.X_test_for_plot = X_sorted[index, 1]   # needs to be the second column for enthalpy
+        self.T_for_X = y_sorted[index,1]
 
         plt.figure(10)
         plt.title('Compare prediction and y_test for field: '+target)
-        plt.plot(self.y_for_plot, '*')
-        plt.plot(self.predict_for_plot, '*')
-        plt.legend(['y_test','predict'])
+        plt.plot(self.T_for_X,self.y_for_plot, 'ok')
+        plt.plot(self.T_for_X,self.predict_for_plot, '^r')
+        plt.legend(['y_test','y_predict'])
+        plt.xlabel('T [K]')
+        plt.ylabel(target)
         plt.show(block=False)
 
     # performs parametric search for the Sequential model
@@ -383,6 +385,12 @@ class ANN_realgas_toolbox(object):
         print(' ')
         print('best metrics score: ', best_score)
 
+    def writDNN(self,name=''):
+        '''Write a .dnn file to use it with OpenFoam'''
+        if name == '':
+            print('Give it a name!')
+        else:
+            cntk.combine(self.model.outputs).save(name)
 
 
     # XGBoost classifier!

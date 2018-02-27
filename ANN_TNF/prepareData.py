@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import sklearn as sk
+from sklearn.preprocessing import MinMaxScaler
 import os, sys
 
 # promt input for the case
@@ -54,4 +55,27 @@ for entry, t in enumerate(timesteps):
             y_Test_arr = data[columnsTrain]
 
 
-#def removeLowT(X_Train_arr,y_Train_arr,X_Test_arr,Test_arr_out):
+# define the target values for y
+targets = ['CO2','H2O','T']
+
+# now creat X and y Scaler
+scaler_X = MinMaxScaler()
+scaler_y = MinMaxScaler()
+
+X_data = X_Test_arr.copy()
+X_data = X_data.append(X_Train_arr)
+
+y_data = y_Test_arr.copy()
+y_data = y_data[targets]
+y_data = y_data.append(y_Train_arr[targets])
+
+scaler_X.fit(X_data)
+scaler_y.fit(y_data)
+
+# transform the data
+X_test = scaler_X.transform(X_Test_arr)
+X_train = scaler_X.transform(X_Train_arr)
+
+y_test = scaler_y.transform(y_Test_arr[targets])
+y_train = scaler_y.transform(y_Train_arr[targets])
+
