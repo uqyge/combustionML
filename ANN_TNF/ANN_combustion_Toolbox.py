@@ -3,7 +3,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 from sklearn import preprocessing, metrics
 
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 #%matplotlib inline
 
 from keras.models import Model, Sequential
@@ -100,7 +100,7 @@ class ANN_combustion_Toolbox(object):
 
     ######################################
     # different ANN model types
-    def setResnet(self, n_neurons=200, blocks=2, loss='mse', optimizer='adam', batch_norm=False):
+    def setResnet(self,  n_neurons=200, blocks = 2, loss='mse', optimizer='adam', batch_norm=False):
         '''default settings: resnet'''
         ######################
         outdim = len(self.targets)
@@ -139,11 +139,16 @@ class ANN_combustion_Toolbox(object):
         self.callbacks_list = [checkpoint, early_stop]
 
 
-    def setSequential(self, indim=2, hiddenLayer=4,n_neurons=200, loss='mse', optimizer='adam', batch_norm=False):
+    def setSequential(self, hiddenLayer=4,n_neurons=200, loss='mse', optimizer='adam', batch_norm=False):
         ######################
         outdim = len(self.targets)
         print('set up Sequential (MLP) ANN')
         self.model = None
+
+        try:
+            indim = len(self.features)
+        except:
+            print('Which are your features?')
 
         self.model = Sequential()
         self.model.add(Dense(n_neurons, input_dim= indim, activation='relu'))
@@ -186,7 +191,7 @@ class ANN_combustion_Toolbox(object):
                 callbacks=self.callbacks_list,
                 shuffle=True)
         except KeyboardInterrupt:
-            print('Training is canceled.')
+            print('\nYou canceled the training.')
 
 
 
@@ -243,44 +248,29 @@ class ANN_combustion_Toolbox(object):
         plt.show(block=False)
 
 
-
-    def plotPredict(self, pressure = 20., target = 'T'):
+    def plotPredict(self, target = 'T'):
         # resacle your data
         y_test_rescaled = self.MinMax_y.inverse_transform(self.y_test)
         X_test_rescaled = self.MinMax_X.inverse_transform(self.X_test)
         predict_rescaled = self.MinMax_y.inverse_transform(self.predict_y)
-
-        # sort your X data according to ascending pressure
-        sort_id = np.argsort(X_test_rescaled[:,0])
-        y_sorted = y_test_rescaled[sort_id[::]]
-        X_sorted = X_test_rescaled[sort_id[::]]
-        predict_sorted = predict_rescaled[sort_id[::]]
-        print(predict_sorted)
-
-        vals = pressure
-        ix = np.isin(X_sorted[:,0], vals)
-        index = np.where(ix)
-        index=index[:][0]
-        print(index)
 
         column_list = list(self.targets)
 
         # find the index of the target label
         target_id=[ind for ind, x in enumerate(column_list) if x==target]
         target_id = target_id[0]
-        print(target_id)
 
-        y_for_plot = y_sorted[index,target_id]
-        predict_for_plot = predict_sorted[index, target_id]
-        print(predict_for_plot)
+        self.y_for_plot = y_test_rescaled[:,target_id]
+        self.predict_for_plot = predict_rescaled[:, target_id]
+        self.X_test_for_plot = X_test_rescaled[:, 1]   # needs to be the second column for enthalpy
 
-        y_for_plot.sort()
-        predict_for_plot.sort()
         plt.figure(10)
         plt.title('Compare prediction and y_test for field: '+target)
-        plt.plot(y_for_plot, '*')
-        plt.plot(predict_for_plot, '*')
-        plt.legend(['y_test','predict'])
+        plt.plot(self.y_for_plot, 'ok')
+        plt.plot(self.predict_for_plot, '^r')
+        plt.legend(['y_test','y_predict'])
+        #plt.xlabel('T [K]')
+        plt.ylabel(target)
         plt.show(block=False)
 
 
