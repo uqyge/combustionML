@@ -1,0 +1,149 @@
+Help on package bayes_opt:
+
+NNAAMMEE
+    bayes_opt
+
+PPAACCKKAAGGEE  CCOONNTTEENNTTSS
+    bayesian_optimization
+    helpers
+
+CCLLAASSSSEESS
+    builtins.object
+        bayes_opt.bayesian_optimization.BayesianOptimization
+        bayes_opt.helpers.UtilityFunction
+    
+    class BBaayyeessiiaannOOppttiimmiizzaattiioonn(builtins.object)
+     |  Methods defined here:
+     |  
+     |  ____iinniitt____(self, f, pbounds, random_state=None, verbose=1)
+     |      :param f:
+     |          Function to be maximized.
+     |      
+     |      :param pbounds:
+     |          Dictionary with parameters names as keys and a tuple with minimum
+     |          and maximum values.
+     |      
+     |      :param verbose:
+     |          Whether or not to print progress.
+     |  
+     |  eexxpplloorree(self, points_dict)
+     |      Method to explore user defined points
+     |      
+     |      :param points_dict:
+     |  
+     |  iinniitt(self, init_points)
+     |      Initialization method to kick start the optimization process. It is a
+     |      combination of points passed by the user, and randomly sampled ones.
+     |      
+     |      :param init_points:
+     |          Number of random points to probe.
+     |  
+     |  iinniittiiaalliizzee(self, points_dict)
+     |      Method to introduce points for which the target function value is known
+     |      
+     |      :param points_dict:
+     |          dictionary with self.keys and 'target' as keys, and list of
+     |          corresponding values as values.
+     |      
+     |      ex:
+     |          {
+     |              'target': [-1166.19102, -1142.71370, -1138.68293],
+     |              'alpha': [7.0034, 6.6186, 6.0798],
+     |              'colsample_bytree': [0.6849, 0.7314, 0.9540],
+     |              'gamma': [8.3673, 3.5455, 2.3281],
+     |          }
+     |      
+     |      :return:
+     |  
+     |  iinniittiiaalliizzee__ddff(self, points_df)
+     |      Method to introduce point for which the target function
+     |      value is known from pandas dataframe file
+     |      
+     |      :param points_df:
+     |          pandas dataframe with columns (target, {list of columns matching
+     |          self.keys})
+     |      
+     |      ex:
+     |            target        alpha      colsample_bytree        gamma
+     |      -1166.19102       7.0034                0.6849       8.3673
+     |      -1142.71370       6.6186                0.7314       3.5455
+     |      -1138.68293       6.0798                0.9540       2.3281
+     |      -1146.65974       2.4566                0.9290       0.3456
+     |      -1160.32854       1.9821                0.5298       8.7863
+     |      
+     |      :return:
+     |  
+     |  mmaaxxiimmiizzee(self, init_points=5, n_iter=25, acq='ucb', kappa=2.576, xi=0.0, **gp_params)
+     |      Main optimization method.
+     |      
+     |      Parameters
+     |      ----------
+     |      :param init_points:
+     |          Number of randomly chosen points to sample the
+     |          target function before fitting the gp.
+     |      
+     |      :param n_iter:
+     |          Total number of times the process is to repeated. Note that
+     |          currently this methods does not have stopping criteria (due to a
+     |          number of reasons), therefore the total number of points to be
+     |          sampled must be specified.
+     |      
+     |      :param acq:
+     |          Acquisition function to be used, defaults to Upper Confidence Bound.
+     |      
+     |      :param gp_params:
+     |          Parameters to be passed to the Scikit-learn Gaussian Process object
+     |      
+     |      Returns
+     |      -------
+     |      :return: Nothing
+     |  
+     |  ppooiinnttss__ttoo__ccssvv(self, file_name)
+     |      After training all points for which we know target variable
+     |      (both from initialization and optimization) are saved
+     |      
+     |      :param file_name: name of the file where points will be saved in the csv
+     |          format
+     |      
+     |      :return: None
+     |  
+     |  sseett__bboouunnddss(self, new_bounds)
+     |      A method that allows changing the lower and upper searching bounds
+     |      
+     |      :param new_bounds:
+     |          A dictionary with the parameter name and its new bounds
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  ____ddiicctt____
+     |      dictionary for instance variables (if defined)
+     |  
+     |  ____wweeaakkrreeff____
+     |      list of weak references to the object (if defined)
+    
+    class UUttiilliittyyFFuunnccttiioonn(builtins.object)
+     |  An object to compute the acquisition functions.
+     |  
+     |  Methods defined here:
+     |  
+     |  ____iinniitt____(self, kind, kappa, xi)
+     |      If UCB is to be used, a constant kappa is needed.
+     |  
+     |  uuttiilliittyy(self, x, gp, y_max)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  ____ddiicctt____
+     |      dictionary for instance variables (if defined)
+     |  
+     |  ____wweeaakkrreeff____
+     |      list of weak references to the object (if defined)
+
+DDAATTAA
+    ____aallll____ = ['BayesianOptimization', 'UtilityFunction']
+
+FFIILLEE
+    /usr/local/lib/python3.5/dist-packages/bayes_opt/__init__.py
+

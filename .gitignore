@@ -1,5 +1,12 @@
 #gitignore
 
+*.png
+
 *.csv
-data_trax
+
+*.key
+
+*.hdf5
+
+
 
