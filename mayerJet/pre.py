@@ -28,7 +28,9 @@ def read_csv_data(path):
     label = out_scaler.fit_transform(label)
     return input, label,df, in_scaler, out_scaler
 
-a,b,df, in_scaler, out_scaler=read_csv_data('data')
 
-ref=df.loc[df['p']==34]
-x_test = in_scaler.transform(ref[['p','he']])
+if __name__ =="__main__":
+    a,b,df, in_scaler, out_scaler=read_csv_data('data')
+
+    ref=df.loc[df['p']==34]
+    x_test = in_scaler.transform(ref[['p','he']])
