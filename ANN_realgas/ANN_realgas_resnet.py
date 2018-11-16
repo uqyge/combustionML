@@ -136,7 +136,7 @@ history = model.fit(
 #######################
 fig = plt.figure()
 plt.semilogy(history.history['loss'])
-if vsplit
+if vsplit:
     plt.semilogy(history.history['val_loss'])
 plt.title('mse')
 plt.ylabel('loss')
