@@ -1,6 +1,6 @@
 import os
 
-def writeANNproperties(in_scaler,out_scaler):
+def writeANNProperties(in_scaler,out_scaler):
     try:
         assert os.path.isdir('ANNProperties')
     except:
@@ -31,4 +31,4 @@ def writeANNproperties(in_scaler,out_scaler):
 
     ANNProperties.close()
 
-    print('ANNProperties are written')
+    print('\nANNProperties are written')

@@ -14,6 +14,7 @@ from resBlock import res_block
 from pre import read_csv_data
 from writeANNProperties import writeANNProperties
 
+
 # %%
 x_train, y_train, df, in_scaler, out_scaler = read_csv_data('data')
 
@@ -38,8 +39,8 @@ x = Dense(n_neuron, activation='relu')(inputs)
 x = res_block(x, n_neuron, stage=1, block='a', bn=batch_norm)
 x = res_block(x, n_neuron, stage=1, block='b', bn=batch_norm)
 x = res_block(x, n_neuron, stage=1, block='c', bn=batch_norm)
-#x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
-#x = res_block(x, n_neuron, stage=1, block='e', bn=batch_norm)
+x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
+x = res_block(x, n_neuron, stage=1, block='e', bn=batch_norm)
 
 predictions = Dense(dim_label, activation='linear')(x)
 
@@ -108,34 +109,8 @@ np.savetxt('x_test.csv',x_test)
 np.savetxt('pred.csv',predict_val)
 model.save('mayer.H5')
 
+# write the OpenFOAM ANNProperties file
 writeANNProperties(in_scaler,out_scaler)
 
-# try:
-#     assert os.path.isdir('ANNProperties')
-# except:
-#     os.mkdir('ANNProperties')
-#
-# ANNProperties = open('ANNProperties/ANNProperties','w')
-#
-# with open('ANNProperties/top', encoding='utf-8') as f:
-#     for line in f.readlines():
-#         ANNProperties.write(line)
-#
-# ANNProperties.write('in_scale\n')
-# ANNProperties.write('{\n')
-# for i in range(len(in_scaler.mean_)):
-#     mean_string = 'in_%i_mean      %f;\n' % (i+1, in_scaler.mean_[i])
-#     var_string = 'in_%i_var       %f;\n' % (i+1, in_scaler.scale_[i])
-#     ANNProperties.write(mean_string)
-#     ANNProperties.write(var_string)
-#
-# ANNProperties.write('}\n')
-# ANNProperties.write('\nout_scale\n')
-# ANNProperties.write('{\n')
-# for i in range(len(out_scaler.mean_)):
-#     ANNProperties.write('out_%i_mean      %f;\n' % (i+1,out_scaler.mean_[i]))
-#     ANNProperties.write('out_%i_var       %f;\n' % (i+1, out_scaler.scale_[i]))
-# ANNProperties.write('}\n')
-# ANNProperties.write('\n// ************************************************************************* //')
-#
-# ANNProperties.close()
+
+
