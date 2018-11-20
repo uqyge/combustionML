@@ -23,7 +23,7 @@ print('set up ANN')
 # ANN parameters
 dim_input = 2
 dim_label = y_train.shape[1]
-n_neuron = 500
+n_neuron = 100
 batch_size = 1024
 epochs = 400
 vsplit = 0.1
@@ -38,9 +38,9 @@ x = Dense(n_neuron, activation='relu')(inputs)
 # less then 2 res_block, there will be variance
 x = res_block(x, n_neuron, stage=1, block='a', bn=batch_norm)
 x = res_block(x, n_neuron, stage=1, block='b', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='c', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='e', bn=batch_norm)
+# x = res_block(x, n_neuron, stage=1, block='c', bn=batch_norm)
+# x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
+# x = res_block(x, n_neuron, stage=1, block='e', bn=batch_norm)
 
 predictions = Dense(dim_label, activation='linear')(x)
 
@@ -88,13 +88,14 @@ x_test = in_scaler.transform(ref[['p', 'he']])
 
 predict_val = model.predict(x_test.astype(float))
 # predict = out_scaler.
-sp='T'
+sp='Cp'
 predict = pd.DataFrame(out_scaler.inverse_transform(predict_val), columns=['rho','T','thermo:mu','Cp','thermo:psi','thermo:alpha','thermo:as'])
 plt.figure()
 plt.plot(ref['T'], ref[sp], 'r:')
 plt.plot(ref['T'], predict[sp], 'b-')
 plt.show()
 plt.figure()
+plt.title('Error of %s ' % sp)
 plt.plot((ref[sp] - predict[sp]) / ref[sp])
 plt.show()
 
