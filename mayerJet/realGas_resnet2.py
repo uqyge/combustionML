@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from sklearn import preprocessing
+import time
 
 import tensorflow as tf
 from keras.models import Model
@@ -23,7 +23,7 @@ dim_input = 2
 dim_label = y_train.shape[1]
 n_neuron = 200
 batch_size = 1024
-epochs = 400
+epochs = 40
 vsplit = 0.1
 batch_norm = False
 
@@ -83,10 +83,13 @@ model.load_weights("./tmp/weights.best.cntk.hdf5")
 # %%
 ref = df.loc[df['p'] == 40]
 x_test = in_scaler.transform(ref[['p', 'he']])
-
-predict_val = model.predict(x_test.astype(float))
+st = time.time()
+predict_val = model.predict(x_test.astype(float), batch_size=1024 * 256)
+time_gpu_infer = time.time() - st
+print('Gpu inference time is ', time_gpu_infer)
+# %%
 # predict = out_scaler.
-sp='rho'
+sp = 'rho'
 predict = pd.DataFrame(out_scaler.inverse_transform(predict_val), columns=['rho', 'T', 'thermo:mu', 'Cp'])
 plt.figure()
 plt.plot(ref['T'], ref[sp], 'r:')
@@ -103,8 +106,31 @@ sess = K.get_session()
 saver = tf.train.Saver(tf.global_variables())
 saver.save(sess, './exported/my_model')
 tf.train.write_graph(sess.graph, '.', "./exported/graph.pb", as_text=False)
-np.savetxt('x_test.csv',x_test)
-np.savetxt('pred.csv',predict_val)
+np.savetxt('x_test.csv', x_test)
+np.savetxt('pred.csv', predict_val)
 model.save('mayer.H5')
 
 
+# %%
+xs = np.concatenate([x_test for i in range(20)])
+bs=1024*4
+time_batch = []
+time_tot = []
+for i in range(100):
+    st = time.time()
+    _ = model.predict(xs[:bs].astype(float), batch_size=bs)
+    time_gpu_infer_batch = time.time() - st
+    time_batch.append(time_gpu_infer_batch)
+
+
+    st = time.time()
+    _ = model.predict(xs.astype(float), batch_size=bs)
+    time_gpu_infer = time.time() - st
+    time_tot.append(time_gpu_infer)
+
+time_batch=np.asarray(time_batch)
+time_tot = np.asarray(time_tot)
+print('there are ',round(xs.shape[0]/bs+0.5),'batches')
+print('Batch inference time is ', time_batch.mean())
+print('sequential inference time is ', time_batch.mean()*round(xs.shape[0]/bs+0.5))
+print('Gpu inference time is ', time_tot.mean())

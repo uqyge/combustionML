@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b47b0bbf-9e0d-4fcd-b596-6e7967c55997" name="Default" comment="add mayerjet case">
-      <change beforePath="$PROJECT_DIR$/ANN_realgas/realgas_resnet.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/ANN_realgas/realgas_resnet.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mayerJet/pre.py" beforeDir="false" afterPath="$PROJECT_DIR$/mayerJet/pre.py" afterDir="false" />
+    <list default="true" id="b47b0bbf-9e0d-4fcd-b596-6e7967c55997" name="Default" comment="add mayerjet training case">
+      <change afterPath="$PROJECT_DIR$/mayerJet/infer_cpu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mayerJet/realGas_resnet2.py" beforeDir="false" afterPath="$PROJECT_DIR$/mayerJet/realGas_resnet2.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -29,27 +30,28 @@
     <session id="1839832491">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="8" />
+          <entry key="project.closed" value="11" />
           <entry key="project.open.time.2" value="2" />
-          <entry key="project.open.time.5" value="1" />
-          <entry key="project.open.time.6" value="4" />
+          <entry key="project.open.time.5" value="3" />
+          <entry key="project.open.time.6" value="5" />
           <entry key="project.open.time.7" value="1" />
           <entry key="project.open.time.8" value="1" />
-          <entry key="project.opened" value="9" />
+          <entry key="project.open.time.9" value="1" />
+          <entry key="project.opened" value="13" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="csv" value="1" />
           <entry key="ipynb" value="1" />
-          <entry key="py" value="15" />
+          <entry key="py" value="16" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="CSV" value="1" />
           <entry key="IPNB" value="1" />
-          <entry key="Python" value="14" />
+          <entry key="Python" value="15" />
           <entry key="Scratch" value="1" />
         </counts>
       </usages-collector>
@@ -57,16 +59,17 @@
         <counts>
           <entry key="Python Console" value="23" />
           <entry key="dummy" value="37" />
+          <entry key="infer_cpu" value="316" />
           <entry key="pre" value="197" />
-          <entry key="py" value="1150" />
-          <entry key="realGas_resnet2" value="796" />
-          <entry key="txt" value="25" />
+          <entry key="py" value="2067" />
+          <entry key="realGas_resnet2" value="890" />
+          <entry key="txt" value="39" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="62" />
-          <entry key="Python" value="2166" />
+          <entry key="PLAIN_TEXT" value="76" />
+          <entry key="Python" value="3493" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages" />
@@ -75,11 +78,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/mayerJet/realGas_resnet2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="282">
-              <caret line="94" column="12" selection-start-line="94" selection-start-column="12" selection-end-line="94" selection-end-column="12" />
+            <state relative-caret-position="58">
+              <caret line="113" selection-start-line="113" selection-end-line="113" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -87,11 +90,23 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mayerJet/infer_cpu.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="468">
+              <caret line="26" column="27" lean-forward="true" selection-start-line="26" selection-start-column="27" selection-end-line="26" selection-end-column="27" />
+              <folding>
+                <element signature="e#0#19#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mayerJet/pre.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="512">
-              <caret line="35" column="16" lean-forward="true" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
+            <state relative-caret-position="526">
+              <caret line="35" column="16" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
                 <marker date="1542294602328" expanded="true" signature="146:147" ph="..." />
@@ -112,7 +127,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ANN_realgas/readCsv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1016">
+            <state relative-caret-position="1890">
               <caret line="118" column="10" selection-start-line="118" selection-start-column="10" selection-end-line="118" selection-end-column="10" />
             </state>
           </provider>
@@ -153,8 +168,9 @@
         <option value="$PROJECT_DIR$/mayerJet/readCsv.py" />
         <option value="$PROJECT_DIR$/mayerJet/res_block.py" />
         <option value="$PROJECT_DIR$/mayerJet/convert.py" />
-        <option value="$PROJECT_DIR$/mayerJet/realGas_resnet2.py" />
         <option value="$PROJECT_DIR$/mayerJet/pre.py" />
+        <option value="$PROJECT_DIR$/mayerJet/realGas_resnet2.py" />
+        <option value="$PROJECT_DIR$/mayerJet/infer_cpu.py" />
       </list>
     </option>
   </component>
@@ -204,11 +220,6 @@
             <path>
               <item name="combustionML" type="b2602c69:ProjectViewProjectNode" />
               <item name="combustionML" type="462c0819:PsiDirectoryNode" />
-              <item name="ANN_realgas_toolbox" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="combustionML" type="b2602c69:ProjectViewProjectNode" />
-              <item name="combustionML" type="462c0819:PsiDirectoryNode" />
               <item name="mayerJet" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -241,29 +252,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.pre">
-    <configuration name="ANN_realgas_resnet" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="combustionML" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ANN_realgas" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ANN_realgas/ANN_realgas_resnet.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="true" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.realGas_resnet2">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="combustionML" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -278,6 +267,25 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="infer_cpu" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="combustionML" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/mayerJet" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/mayerJet/infer_cpu.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -334,9 +342,6 @@
       <module name="combustionML" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/mayerJet" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -391,19 +396,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.ANN_realgas_resnet" />
       <item itemvalue="Python.readCsv" />
       <item itemvalue="Python.realGas_resnet2" />
       <item itemvalue="Python.pre" />
       <item itemvalue="Python.res_block" />
+      <item itemvalue="Python.infer_cpu" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.pre" />
         <item itemvalue="Python.realGas_resnet2" />
+        <item itemvalue="Python.infer_cpu" />
+        <item itemvalue="Python.pre" />
         <item itemvalue="Python.res_block" />
         <item itemvalue="Python.readCsv" />
-        <item itemvalue="Python.ANN_realgas_resnet" />
       </list>
     </recent_temporary>
   </component>
@@ -425,13 +430,20 @@
       <option name="project" value="LOCAL" />
       <updated>1542289437097</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="add mayerjet training case">
+      <created>1542297410389</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1542297410390</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1080" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1474359" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15384616" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="0" show_stripe_button="false" />
@@ -446,7 +458,7 @@
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3291714" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="12" visible="true" weight="0.33900106" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="12" visible="true" weight="0.34325185" />
       <window_info anchor="right" x="0" y="0" width="430" height="820" id="Documentation" order="0" side_tool="true" weight="0.32959402" />
       <window_info anchor="right" id="SciView" order="1" visible="true" weight="0.32905984" />
       <window_info anchor="right" id="Commander" order="2" weight="0.4" />
@@ -464,7 +476,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="add mayerjet case" />
-    <option name="LAST_COMMIT_MESSAGE" value="add mayerjet case" />
+    <MESSAGE value="add mayerjet training case" />
+    <option name="LAST_COMMIT_MESSAGE" value="add mayerjet training case" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -601,13 +614,10 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/mayerJet/test1.csv" />
-    <entry file="file://$PROJECT_DIR$/mayerJet/realGas_resnet2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="94" column="12" selection-start-line="94" selection-start-column="12" selection-end-line="94" selection-end-column="12" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
+    <entry file="file://$PROJECT_DIR$/ANN_realgas/realgas_resnet.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="15" />
         </state>
       </provider>
     </entry>
@@ -618,27 +628,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ANN_realgas/realgas_resnet.ipynb">
-      <provider selected="true" editor-type-id="ipnb-editor">
-        <state>
-          <selected id="15" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ANN_realgas/readCsv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1016">
+        <state relative-caret-position="1890">
           <caret line="118" column="10" selection-start-line="118" selection-start-column="10" selection-end-line="118" selection-end-column="10" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/mayerJet/pre.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="512">
-          <caret line="35" column="16" lean-forward="true" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
+        <state relative-caret-position="526">
+          <caret line="35" column="16" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
             <marker date="1542294602328" expanded="true" signature="146:147" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mayerJet/infer_cpu.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="468">
+          <caret line="26" column="27" lean-forward="true" selection-start-line="26" selection-start-column="27" selection-end-line="26" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mayerJet/realGas_resnet2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="58">
+          <caret line="113" selection-start-line="113" selection-end-line="113" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
