@@ -1,0 +1,2 @@
+#!/bin/bash
+trtexec --uff=mayer.uff --uffInput=input_1,1,2,1, --output=dense_2/BiasAdd  --batch=1024

@@ -21,7 +21,7 @@ print('set up ANN')
 # ANN parameters
 dim_input = 2
 dim_label = y_train.shape[1]
-n_neuron = 200
+n_neuron = 100
 batch_size = 1024
 epochs = 40
 vsplit = 0.1
@@ -84,7 +84,7 @@ model.load_weights("./tmp/weights.best.cntk.hdf5")
 ref = df.loc[df['p'] == 40]
 x_test = in_scaler.transform(ref[['p', 'he']])
 st = time.time()
-predict_val = model.predict(x_test.astype(float), batch_size=1024 * 256)
+predict_val = model.predict(x_test.astype(float), batch_size=1024)
 time_gpu_infer = time.time() - st
 print('Gpu inference time is ', time_gpu_infer)
 # %%
