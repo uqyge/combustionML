@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from sklearn import preprocessing
+import time
 
 import tensorflow as tf
 from keras.models import Model
@@ -25,7 +25,7 @@ dim_input = 2
 dim_label = y_train.shape[1]
 n_neuron = 100
 batch_size = 1024
-epochs = 400
+epochs = 40
 vsplit = 0.1
 batch_norm = False
 
@@ -85,11 +85,16 @@ model.load_weights("./tmp/weights.best.cntk.hdf5")
 # %%
 ref = df.loc[df['p'] == 40]
 x_test = in_scaler.transform(ref[['p', 'he']])
-
-predict_val = model.predict(x_test.astype(float))
+st = time.time()
+predict_val = model.predict(x_test.astype(float), batch_size=1024)
+time_gpu_infer = time.time() - st
+print('Gpu inference time is ', time_gpu_infer)
+# %%
 # predict = out_scaler.
+
 sp='Cp'
 predict = pd.DataFrame(out_scaler.inverse_transform(predict_val), columns=['rho','T','thermo:mu','Cp','thermo:psi','thermo:alpha','thermo:as'])
+
 plt.figure()
 plt.plot(ref['T'], ref[sp], 'r:')
 plt.plot(ref['T'], predict[sp], 'b-')
@@ -106,12 +111,13 @@ sess = K.get_session()
 saver = tf.train.Saver(tf.global_variables())
 saver.save(sess, './exported/my_model')
 tf.train.write_graph(sess.graph, '.', "./exported/graph.pb", as_text=False)
-np.savetxt('x_test.csv',x_test)
-np.savetxt('pred.csv',predict_val)
+np.savetxt('x_test.csv', x_test)
+np.savetxt('pred.csv', predict_val)
 model.save('mayer.H5')
 
 # write the OpenFOAM ANNProperties file
 writeANNProperties(in_scaler,out_scaler)
+
 
 
 
