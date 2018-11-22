@@ -8,7 +8,7 @@ from ANN_realgas_toolbox import ANN_realgas_toolbox
 ANN = ANN_realgas_toolbox()
 
 ANN.import_data()
-#ANN.scale_split_data()
+ANN.scale_split_data()
 #ANN.scale_split_data(targets = ['Cp'])
 #ANN.setSequential(hiddenLayer=1,n_neurons=100)
 #ANN.fitModel()

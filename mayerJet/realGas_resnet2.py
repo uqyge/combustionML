@@ -12,6 +12,8 @@ from keras.callbacks import ModelCheckpoint
 
 from resBlock import res_block
 from pre import read_csv_data
+from writeANNProperties import writeANNProperties
+
 
 # %%
 x_train, y_train, df, in_scaler, out_scaler = read_csv_data('data')
@@ -21,7 +23,7 @@ print('set up ANN')
 # ANN parameters
 dim_input = 2
 dim_label = y_train.shape[1]
-n_neuron = 200
+n_neuron = 100
 batch_size = 1024
 epochs = 40
 vsplit = 0.1
@@ -36,9 +38,9 @@ x = Dense(n_neuron, activation='relu')(inputs)
 # less then 2 res_block, there will be variance
 x = res_block(x, n_neuron, stage=1, block='a', bn=batch_norm)
 x = res_block(x, n_neuron, stage=1, block='b', bn=batch_norm)
-
 # x = res_block(x, n_neuron, stage=1, block='c', bn=batch_norm)
 # x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
+# x = res_block(x, n_neuron, stage=1, block='e', bn=batch_norm)
 
 predictions = Dense(dim_label, activation='linear')(x)
 
@@ -89,13 +91,16 @@ time_gpu_infer = time.time() - st
 print('Gpu inference time is ', time_gpu_infer)
 # %%
 # predict = out_scaler.
-sp = 'rho'
-predict = pd.DataFrame(out_scaler.inverse_transform(predict_val), columns=['rho', 'T', 'thermo:mu', 'Cp'])
+
+sp='Cp'
+predict = pd.DataFrame(out_scaler.inverse_transform(predict_val), columns=['rho','T','thermo:mu','Cp','thermo:psi','thermo:alpha','thermo:as'])
+
 plt.figure()
 plt.plot(ref['T'], ref[sp], 'r:')
 plt.plot(ref['T'], predict[sp], 'b-')
 plt.show()
 plt.figure()
+plt.title('Error of %s ' % sp)
 plt.plot((ref[sp] - predict[sp]) / ref[sp])
 plt.show()
 
@@ -109,4 +114,10 @@ tf.train.write_graph(sess.graph, '.', "./exported/graph.pb", as_text=False)
 np.savetxt('x_test.csv', x_test)
 np.savetxt('pred.csv', predict_val)
 model.save('mayer.H5')
+
+# write the OpenFOAM ANNProperties file
+writeANNProperties(in_scaler,out_scaler)
+
+
+
 

@@ -22,10 +22,14 @@ def read_csv_data(path):
     in_scaler = preprocessing.StandardScaler()
     input = in_scaler.fit_transform(input)
 
-    label=df[['rho','T','thermo:mu','Cp']]
+    label=df[['rho','T','thermo:mu','Cp','thermo:psi','thermo:alpha','thermo:as']]
     # out_scaler = preprocessing.MinMaxScaler()
     out_scaler = preprocessing.StandardScaler()
     label = out_scaler.fit_transform(label)
+    print('\n*******************************')
+    print('This is the order of the labels:')
+    print('rho\nT\nthermo:mu\nCp\nthermo:psi\nthermo:alpha\nthermo:as')
+    print('*******************************\n')
     return input, label,df, in_scaler, out_scaler
 
 

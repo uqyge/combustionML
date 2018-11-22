@@ -271,7 +271,7 @@ class ANN_realgas_toolbox(object):
             target_id = target_id[0]
 
             TestR2Value = metrics.r2_score(self.predict_y[:, target_id], self.y_test[:, target_id])
-            print("Test Set R-Square=", TestR2Value)
+            print("Test Set R-Square = ", TestR2Value)
 
             fig = plt.figure(3)
             plt.plot(self.predict_y[:, target_id], self.y_test[:, target_id], 'k^', ms=3, mfc='none')

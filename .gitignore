@@ -8,5 +8,9 @@
 
 *.hdf5
 
+*.uff
+*.pd
+*.H5
+__pychache__
 
 
