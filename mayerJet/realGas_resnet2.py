@@ -110,27 +110,3 @@ np.savetxt('x_test.csv', x_test)
 np.savetxt('pred.csv', predict_val)
 model.save('mayer.H5')
 
-
-# %%
-xs = np.concatenate([x_test for i in range(20)])
-bs=1024*4
-time_batch = []
-time_tot = []
-for i in range(100):
-    st = time.time()
-    _ = model.predict(xs[:bs].astype(float), batch_size=bs)
-    time_gpu_infer_batch = time.time() - st
-    time_batch.append(time_gpu_infer_batch)
-
-
-    st = time.time()
-    _ = model.predict(xs.astype(float), batch_size=bs)
-    time_gpu_infer = time.time() - st
-    time_tot.append(time_gpu_infer)
-
-time_batch=np.asarray(time_batch)
-time_tot = np.asarray(time_tot)
-print('there are ',round(xs.shape[0]/bs+0.5),'batches')
-print('Batch inference time is ', time_batch.mean())
-print('sequential inference time is ', time_batch.mean()*round(xs.shape[0]/bs+0.5))
-print('Gpu inference time is ', time_tot.mean())
