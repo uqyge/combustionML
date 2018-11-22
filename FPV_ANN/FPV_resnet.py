@@ -16,10 +16,13 @@ from data_reader import read_csv_data
 
 
 # define the labels
-labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']
+#labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']
+labels = ['T','CH4']
 
+# read in the data
 X, y, df, in_scaler, out_scaler = read_csv_data('premix_data',labels = labels)
 
+# split into train and test data
 X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.1)
 
 ######################
@@ -27,9 +30,9 @@ print('set up ANN')
 # ANN parameters
 dim_input = 2
 dim_label = y_train.shape[1]
-n_neuron = 600
-batch_size = 1024
-epochs = 500
+n_neuron = 800
+batch_size = 264 #1024
+epochs = 1000
 vsplit = 0.1
 batch_norm = False
 
@@ -94,22 +97,22 @@ model.load_weights("./tmp/weights.best.cntk.hdf5")
 # ref = df.loc[df['p'] == 40]
 # x_test = in_scaler.transform(ref[['p', 'he']])
 
-X_test = pd.DataFrame(X_test,columns=['f','PV'])
-y_test = pd.DataFrame(y_test,columns=labels)
-
 predict_val = model.predict(X_test.values)
+
+X_test_df = pd.DataFrame(in_scaler.inverse_transform(X_test),columns=['f','PV'])
+y_test_df = pd.DataFrame(out_scaler.inverse_transform(y_test),columns=labels)
 
 sp='CH4'
 
-predict = pd.DataFrame(out_scaler.inverse_transform(predict_val), columns=labels)
+predict_df = pd.DataFrame(out_scaler.inverse_transform(predict_val), columns=labels)
 
 plt.figure()
-plt.plot(X_test['f'], y_test[sp], 'r:')
-plt.plot(X_test['f'], predict[sp], 'b-')
+plt.plot(X_test_df['f'], y_test_df[sp], 'r:')
+plt.plot(X_test_df['f'], predict_df[sp], 'b-')
 plt.show()
 plt.figure()
 plt.title('Error of %s ' % sp)
-plt.plot((y_test[sp] - predict[sp]) / y_test[sp])
+plt.plot((y_test_df[sp] - predict_df[sp]) / y_test_df[sp])
 plt.show()
 
 # %%
@@ -119,7 +122,7 @@ sess = K.get_session()
 saver = tf.train.Saver(tf.global_variables())
 saver.save(sess, './exported/my_model')
 tf.train.write_graph(sess.graph, '.', "./exported/graph.pb", as_text=False)
-np.savetxt('x_test.csv',x_test)
+np.savetxt('x_test.csv',X_test)
 np.savetxt('prediction.csv',predict_val)
 model.save('FPB.H5')
 
