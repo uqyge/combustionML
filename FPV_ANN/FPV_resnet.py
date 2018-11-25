@@ -11,28 +11,29 @@ from keras.layers import Dense, Input
 from keras.callbacks import ModelCheckpoint
 
 from resBlock import res_block
-from data_reader import read_csv_data
+from data_reader import read_data
 #from writeANNProperties import writeANNProperties
 
 
 # define the labels
-#labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']
-labels = ['T','CH4']
+labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']
+# labels = ['T','CH4']
 
 # read in the data
-X, y, df, in_scaler, out_scaler = read_csv_data('premix_data',labels = labels)
+X, y, df, in_scaler, out_scaler = read_data('./data/fpv_df.H5',labels = labels)
 
 # split into train and test data
 X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.1)
 
-######################
+
+# %%
 print('set up ANN')
 # ANN parameters
 dim_input = 2
 dim_label = y_train.shape[1]
-n_neuron = 800
-batch_size = 264 #1024
-epochs = 1000
+n_neuron = 100
+batch_size = 1024*32
+epochs = 1_000
 vsplit = 0.1
 batch_norm = False
 
@@ -45,11 +46,6 @@ x = Dense(n_neuron, activation='relu')(inputs)
 # less then 2 res_block, there will be variance
 x = res_block(x, n_neuron, stage=1, block='a', bn=batch_norm)
 x = res_block(x, n_neuron, stage=1, block='b', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='c', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='e', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='f', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='g', bn=batch_norm)
 
 predictions = Dense(dim_label, activation='linear')(x)
 
@@ -89,7 +85,8 @@ plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper right')
 plt.show()
 
-#########################################
+
+#%%
 model.load_weights("./tmp/weights.best.cntk.hdf5")
 # cntk.combine(model.outputs).save('mayerTest.dnn')
 
@@ -97,7 +94,7 @@ model.load_weights("./tmp/weights.best.cntk.hdf5")
 # ref = df.loc[df['p'] == 40]
 # x_test = in_scaler.transform(ref[['p', 'he']])
 
-predict_val = model.predict(X_test.values)
+predict_val = model.predict(X_test)
 
 X_test_df = pd.DataFrame(in_scaler.inverse_transform(X_test),columns=['f','PV'])
 y_test_df = pd.DataFrame(out_scaler.inverse_transform(y_test),columns=labels)
@@ -110,24 +107,19 @@ plt.figure()
 plt.plot(X_test_df['f'], y_test_df[sp], 'r:')
 plt.plot(X_test_df['f'], predict_df[sp], 'b-')
 plt.show()
+
 plt.figure()
 plt.title('Error of %s ' % sp)
 plt.plot((y_test_df[sp] - predict_df[sp]) / y_test_df[sp])
 plt.show()
 
+plt.figure()
+plt.plot(predict_df[sp],y_test_df[sp])
+plt.show()
 # %%
-from keras import backend as K
+a=(y_test_df[sp] - predict_df[sp]) / y_test_df[sp]
+test_data=pd.concat([X_test_df,y_test_df],axis=1)
+pred_data=pd.concat([X_test_df,predict_df],axis=1)
 
-sess = K.get_session()
-saver = tf.train.Saver(tf.global_variables())
-saver.save(sess, './exported/my_model')
-tf.train.write_graph(sess.graph, '.', "./exported/graph.pb", as_text=False)
-np.savetxt('x_test.csv',X_test)
-np.savetxt('prediction.csv',predict_val)
-model.save('FPB.H5')
-
-# write the OpenFOAM ANNProperties file
-# writeANNProperties(in_scaler,out_scaler)
-
-
-
+test_data.to_hdf('sim_check.H5',key='test')
+pred_data.to_hdf('sim_check.H5',key='pred')
