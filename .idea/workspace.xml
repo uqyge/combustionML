@@ -2,15 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b47b0bbf-9e0d-4fcd-b596-6e7967c55997" name="Default" comment="compare inference speed">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FPV_ANN/csv2hdf5.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FPV_ANN/pre.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FPV_ANN/pre_precessing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FPV_ANN/FPV_resnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/FPV_ANN/FPV_resnet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FPV_ANN/csv2hdf.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/FPV_ANN/data_reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/FPV_ANN/data_reader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FPV_ANN/premix_data" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FPV_ANN/pre.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/FPV_ANN/pre.ipynb" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -37,7 +32,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/FPV_ANN/pre_precessing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
+            <state relative-caret-position="126">
               <caret line="7" column="10" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
@@ -46,11 +41,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/FPV_ANN/FPV_resnet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="106" column="45" selection-start-line="106" selection-start-column="45" selection-end-line="106" selection-end-column="45" />
+            <state relative-caret-position="202">
+              <caret line="131" selection-start-line="131" selection-end-line="131" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -61,29 +56,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/FPV_ANN/data_reader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="401">
-              <caret line="27" selection-start-line="27" selection-end-line="27" />
+            <state relative-caret-position="270">
+              <caret line="20" column="37" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/FPV_ANN/csv2hdf5.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="12" column="48" selection-start-line="12" selection-start-column="48" selection-end-line="12" selection-end-column="48" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/FPV_ANN/tmp.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="1" selection-start-line="1" selection-end-line="1" />
             </state>
           </provider>
         </entry>
@@ -130,18 +107,18 @@
         <option value="$PROJECT_DIR$/FPV_ANN/csv2hdf.py" />
         <option value="$PROJECT_DIR$/FPV_ANN/test.py" />
         <option value="$PROJECT_DIR$/FPV_ANN/pre_precessing.py" />
-        <option value="$PROJECT_DIR$/FPV_ANN/data_reader.py" />
-        <option value="$PROJECT_DIR$/FPV_ANN/FPV_resnet.py" />
         <option value="$PROJECT_DIR$/FPV_ANN/tmp.py" />
         <option value="$PROJECT_DIR$/FPV_ANN/csv2hdf5.py" />
+        <option value="$PROJECT_DIR$/FPV_ANN/data_reader.py" />
+        <option value="$PROJECT_DIR$/FPV_ANN/FPV_resnet.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1911" />
-    <option name="y" value="158" />
-    <option name="width" value="1910" />
-    <option name="height" value="810" />
+    <option name="x" value="1920" />
+    <option name="y" value="27" />
+    <option name="width" value="1920" />
+    <option name="height" value="1020" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -163,6 +140,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -190,7 +168,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -217,7 +194,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.csv2hdf5">
+  <component name="RunManager" selected="Python.FPV_resnet">
     <configuration name="FPV_resnet" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="combustionML" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -266,6 +243,9 @@
       <module name="combustionML" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/FPV_ANN" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -329,6 +309,9 @@
       <module name="combustionML" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/FPV_ANN" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -369,10 +352,10 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.FPV_resnet" />
         <item itemvalue="Python.csv2hdf5" />
         <item itemvalue="Python.tmp" />
         <item itemvalue="Python.data_reader" />
-        <item itemvalue="Python.FPV_resnet" />
         <item itemvalue="Python.pre_precessing" />
       </list>
     </recent_temporary>
@@ -388,6 +371,10 @@
       <option name="presentableId" value="Default" />
       <updated>1509608876579</updated>
       <workItem from="1543164222320" duration="3623000" />
+      <workItem from="1543277388749" duration="559000" />
+      <workItem from="1543329138087" duration="617000" />
+      <workItem from="1543354203489" duration="50000" />
+      <workItem from="1543416461497" duration="11248000" />
     </task>
     <task id="LOCAL-00001" summary="add mayerjet case">
       <created>1542289437097</created>
@@ -442,7 +429,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3623000" />
+    <option name="totallyTimeSpent" value="16097000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -456,7 +443,7 @@
   <component name="ToolWindowManager">
     <frame x="1920" y="27" width="1920" height="1020" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16239317" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1693376" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="0" show_stripe_button="false" />
@@ -471,9 +458,9 @@
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3276644" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5005342" side_tool="true" weight="0.44104308" />
-      <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49946582" visible="true" weight="0.44104308" />
-      <window_info anchor="right" x="0" y="0" width="430" height="820" id="Documentation" order="0" side_tool="true" weight="0.32959402" />
-      <window_info anchor="right" id="SciView" order="1" visible="true" weight="0.32852563" />
+      <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49946582" visible="true" weight="0.44671202" />
+      <window_info anchor="right" x="0" y="0" width="430" height="820" id="Documentation" order="0" sideWeight="0.5020492" side_tool="true" weight="0.32852563" />
+      <window_info active="true" anchor="right" id="SciView" order="1" sideWeight="0.49795082" visible="true" weight="0.32852563" />
       <window_info anchor="right" id="Commander" order="2" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="3" weight="0.25" />
       <window_info anchor="right" id="Database" order="4" weight="0.3293011" />
@@ -614,9 +601,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_3.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_3.py" />
     <entry file="file://$PROJECT_DIR$/mayerJet/resBlock.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="396">
@@ -671,9 +656,23 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/FPV_ANN/csv2hdf.py" />
+    <entry file="file://$PROJECT_DIR$/FPV_ANN/tmp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FPV_ANN/csv2hdf5.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="12" column="48" selection-start-line="12" selection-start-column="48" selection-end-line="12" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/FPV_ANN/pre_precessing.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
+        <state relative-caret-position="126">
           <caret line="7" column="10" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
@@ -683,35 +682,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/FPV_ANN/data_reader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="401">
-          <caret line="27" selection-start-line="27" selection-end-line="27" />
+        <state relative-caret-position="270">
+          <caret line="20" column="37" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/FPV_ANN/tmp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/FPV_ANN/FPV_resnet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="106" column="45" selection-start-line="106" selection-start-column="45" selection-end-line="106" selection-end-column="45" />
+        <state relative-caret-position="202">
+          <caret line="131" selection-start-line="131" selection-end-line="131" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/FPV_ANN/csv2hdf5.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="12" column="48" selection-start-line="12" selection-start-column="48" selection-end-line="12" selection-end-column="48" />
         </state>
       </provider>
     </entry>

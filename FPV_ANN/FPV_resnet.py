@@ -16,24 +16,35 @@ from data_reader import read_data
 
 
 # define the labels
-labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']
+
 # labels = ['T','CH4']
+# labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']
+labels = ['C2H3', 'C2H6', 'CH2', 'H2CN', 'C2H4', 'H2O2', 'C2H',
+       'CN', 'heatRelease', 'NCO', 'NNH', 'N2', 'AR', 'psi', 'CO', 'CH4',
+       'HNCO', 'CH2OH', 'HCCO', 'CH2CO', 'CH', 'mu', 'C2H2', 'C2H5', 'H2', 'T',
+       'PVs', 'O', 'O2', 'N2O', 'C', 'C3H7', 'CH2(S)', 'NH3', 'HO2', 'NO',
+       'HCO', 'NO2', 'OH', 'HCNO', 'CH3CHO', 'CH3', 'NH', 'alpha', 'CH3O',
+       'CO2', 'CH3OH', 'CH2CHO', 'CH2O', 'C3H8', 'HNO', 'NH2', 'HCN', 'H', 'N',
+       'H2O', 'HCCOH', 'HCNN']
+
+
+input_features=['f','pv','zeta']
 
 # read in the data
-X, y, df, in_scaler, out_scaler = read_data('./data/fpv_df.H5',labels = labels)
+X, y, df, in_scaler, out_scaler = read_data('./data/tables_of_fgm.H5',input_features=input_features, labels = labels)
 
 # split into train and test data
-X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.1)
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.01)
 
 
 # %%
 print('set up ANN')
 # ANN parameters
-dim_input = 2
+dim_input = X_train.shape[1]
 dim_label = y_train.shape[1]
 n_neuron = 100
 batch_size = 1024*32
-epochs = 1_000
+epochs = 2_000
 vsplit = 0.1
 batch_norm = False
 
@@ -50,7 +61,7 @@ x = res_block(x, n_neuron, stage=1, block='b', bn=batch_norm)
 predictions = Dense(dim_label, activation='linear')(x)
 
 model = Model(inputs=inputs, outputs=predictions)
-model.compile(loss='mse', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='mae', optimizer='adam', metrics=['accuracy'])
 
 # checkpoint (save the best model based validate loss)
 filepath = "./tmp/weights.best.cntk.hdf5"
@@ -96,25 +107,27 @@ model.load_weights("./tmp/weights.best.cntk.hdf5")
 
 predict_val = model.predict(X_test)
 
-X_test_df = pd.DataFrame(in_scaler.inverse_transform(X_test),columns=['f','PV'])
+X_test_df = pd.DataFrame(in_scaler.inverse_transform(X_test),columns=input_features)
 y_test_df = pd.DataFrame(out_scaler.inverse_transform(y_test),columns=labels)
 
-sp='CH4'
+sp='CO'
 
 predict_df = pd.DataFrame(out_scaler.inverse_transform(predict_val), columns=labels)
 
-plt.figure()
-plt.plot(X_test_df['f'], y_test_df[sp], 'r:')
-plt.plot(X_test_df['f'], predict_df[sp], 'b-')
-plt.show()
+# plt.figure()
+# plt.plot(X_test_df['f'], y_test_df[sp], 'r:')
+# plt.plot(X_test_df['f'], predict_df[sp], 'b-')
+# plt.show()
 
 plt.figure()
 plt.title('Error of %s ' % sp)
 plt.plot((y_test_df[sp] - predict_df[sp]) / y_test_df[sp])
+plt.title(sp)
 plt.show()
 
 plt.figure()
-plt.plot(predict_df[sp],y_test_df[sp])
+plt.scatter(predict_df[sp],y_test_df[sp],s=1)
+plt.title(sp)
 plt.show()
 # %%
 a=(y_test_df[sp] - predict_df[sp]) / y_test_df[sp]
