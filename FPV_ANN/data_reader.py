@@ -14,7 +14,10 @@ def read_csv_data(path = 'premix_data', labels = ['T','CH4','O2','CO2','CO','H2O
         # if os.path.isfile(fn):
         print(fn)
         tmp = pd.read_csv(os.path.join(path, fn))
-        tmp['f']  = float(fn[fn.find('f_') + len('f_'):fn.rfind('.csv')])
+        try:
+            assert tmp['f']
+        except:
+            tmp['f']  = float(fn[fn.find('f_') + len('f_'):fn.rfind('.csv')])
         df = df.append(tmp)
 
     input_df=df[['f','PV']]
