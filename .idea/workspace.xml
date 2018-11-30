@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b47b0bbf-9e0d-4fcd-b596-6e7967c55997" name="Default" comment="compare inference speed">
+      <change afterPath="$PROJECT_DIR$/FPV_ANN/of_tables.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FPV_ANN/post.ipynb" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/ildm/data/output.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ildm/ildm_plots.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ildm/ildm_plots.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/ildm/ildm_plots.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ildm/read_ildm.py" beforeDir="false" afterPath="$PROJECT_DIR$/ildm/read_ildm.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,11 +31,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/FPV_ANN/pre_precessing.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="126">
-              <caret line="7" column="10" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
+              <caret line="7" column="10" lean-forward="true" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -44,41 +46,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/FPV_ANN/FPV_resnet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
-              <caret line="119" column="12" selection-start-line="119" selection-start-column="12" selection-end-line="119" selection-end-column="12" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/ildm/data/output.dat">
-          <provider selected="true" editor-type-id="LargeFileEditor">
-            <state relative-caret-position="270">
-              <caret line="24" column="29" lean-forward="true" selection-start-line="24" selection-start-column="29" selection-end-line="24" selection-end-column="29" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ildm/read_ildm.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
-              <caret line="84" column="4" selection-start-line="91" selection-start-column="4" selection-end-line="91" selection-end-column="28" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/FPV_ANN/data_reader.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="196">
-              <caret line="20" column="37" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
+            <state relative-caret-position="218">
+              <caret line="121" column="12" selection-start-line="121" selection-start-column="12" selection-end-line="121" selection-end-column="12" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -172,13 +141,7 @@
             <path>
               <item name="combustionML" type="b2602c69:ProjectViewProjectNode" />
               <item name="combustionML" type="462c0819:PsiDirectoryNode" />
-              <item name="ildm" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="combustionML" type="b2602c69:ProjectViewProjectNode" />
-              <item name="combustionML" type="462c0819:PsiDirectoryNode" />
-              <item name="ildm" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="FPV_ANN" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="combustionML" type="b2602c69:ProjectViewProjectNode" />
@@ -395,7 +358,7 @@
       <workItem from="1543354203489" duration="50000" />
       <workItem from="1543416461497" duration="11248000" />
       <workItem from="1543506103543" duration="694000" />
-      <workItem from="1543586960396" duration="2184000" />
+      <workItem from="1543586960396" duration="3424000" />
     </task>
     <task id="LOCAL-00001" summary="add mayerjet case">
       <created>1542289437097</created>
@@ -453,11 +416,18 @@
       <option name="project" value="LOCAL" />
       <updated>1543506167674</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="add plot for ildm">
+      <created>1543591584241</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1543591584241</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="18975000" />
+    <option name="totallyTimeSpent" value="20215000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -503,7 +473,8 @@
     <MESSAGE value="add mayerjet case" />
     <MESSAGE value="add mayerjet training case" />
     <MESSAGE value="compare inference speed" />
-    <option name="LAST_COMMIT_MESSAGE" value="compare inference speed" />
+    <MESSAGE value="add plot for ildm" />
+    <option name="LAST_COMMIT_MESSAGE" value="add plot for ildm" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -698,36 +669,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/FPV_ANN/FPV_resnet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="119" column="12" selection-start-line="119" selection-start-column="12" selection-end-line="119" selection-end-column="12" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/FPV_ANN/pre_precessing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="7" column="10" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ildm/read_ildm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="84" column="4" selection-start-line="91" selection-start-column="4" selection-end-line="91" selection-end-column="28" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/FPV_ANN/data_reader.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="196">
@@ -741,7 +682,37 @@
     <entry file="file://$PROJECT_DIR$/ildm/data/output.dat">
       <provider selected="true" editor-type-id="LargeFileEditor">
         <state relative-caret-position="270">
-          <caret line="24" column="29" lean-forward="true" selection-start-line="24" selection-start-column="29" selection-end-line="24" selection-end-column="29" />
+          <caret line="24" column="29" selection-start-line="24" selection-start-column="29" selection-end-line="24" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FPV_ANN/FPV_resnet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="218">
+          <caret line="121" column="12" selection-start-line="121" selection-start-column="12" selection-end-line="121" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ildm/read_ildm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="124">
+          <caret line="85" column="16" selection-start-line="85" selection-start-column="16" selection-end-line="85" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FPV_ANN/pre_precessing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="10" lean-forward="true" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -85,12 +85,12 @@ with open('./data/output.dat','r') as f:
     #%%
     # read grids
 
-    b=[]
-    c=[]
-    d=[]
-    a = [b, c, d]
-    for line in lines[22:72]:
-        for idx, i in enumerate(line.split(' ')):
-            a[idx-1].append(i)
+    # b=[]
+    # c=[]
+    # d=[]
+    # a = [b, c, d]
+    # for line in lines[22:72]:
+    #     for idx, i in enumerate(line.split(' ')):
+    #         a[idx-1].append(i)
 
 
