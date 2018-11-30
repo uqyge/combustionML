@@ -12,5 +12,7 @@
 *.pd
 *.H5
 __pychache__
+my_model.*
+export
 
 
