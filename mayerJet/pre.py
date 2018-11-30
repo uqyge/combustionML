@@ -30,10 +30,10 @@ def read_csv_data(path):
     print('This is the order of the labels:')
     print('rho\nT\nthermo:mu\nCp\nthermo:psi\nthermo:alpha\nthermo:as')
     print('*******************************\n')
-    return input, label,df, in_scaler, out_scaler
+    return input, label, df, in_scaler, out_scaler
 
 
-if __name__ =="__main__":
+if __name__ == "__main__":
     a,b,df, in_scaler, out_scaler=read_csv_data('data')
 
     ref=df.loc[df['p']==34]

@@ -23,9 +23,9 @@ print('set up ANN')
 # ANN parameters
 dim_input = 2
 dim_label = y_train.shape[1]
-n_neuron = 100
+n_neuron = 600
 batch_size = 1024
-epochs = 40
+epochs = 600
 vsplit = 0.1
 batch_norm = False
 
@@ -38,9 +38,9 @@ x = Dense(n_neuron, activation='relu')(inputs)
 # less then 2 res_block, there will be variance
 x = res_block(x, n_neuron, stage=1, block='a', bn=batch_norm)
 x = res_block(x, n_neuron, stage=1, block='b', bn=batch_norm)
-# x = res_block(x, n_neuron, stage=1, block='c', bn=batch_norm)
-# x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
-# x = res_block(x, n_neuron, stage=1, block='e', bn=batch_norm)
+x = res_block(x, n_neuron, stage=1, block='c', bn=batch_norm)
+x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
+x = res_block(x, n_neuron, stage=1, block='e', bn=batch_norm)
 
 predictions = Dense(dim_label, activation='linear')(x)
 
