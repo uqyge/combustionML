@@ -81,3 +81,16 @@ with open('./data/output.dat','r') as f:
     print(df.columns)
 
     df.to_hdf('bigDataFrame.H5',key='ildm_raw_data',complevel=9,complib='zlib')
+
+    #%%
+    # read grids
+
+    # b=[]
+    # c=[]
+    # d=[]
+    # a = [b, c, d]
+    # for line in lines[22:72]:
+    #     for idx, i in enumerate(line.split(' ')):
+    #         a[idx-1].append(i)
+
+
