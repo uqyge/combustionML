@@ -11,8 +11,8 @@ from keras.layers import Dense, Input
 from keras.callbacks import ModelCheckpoint
 
 from resBlock import res_block
-from data_reader import read_data
-#from writeANNProperties import writeANNProperties
+from data_reader import read_hdf_data
+from writeANNProperties import writeANNProperties
 
 
 # define the labels
@@ -31,11 +31,10 @@ labels = ['C2H3', 'C2H6', 'CH2', 'H2CN', 'C2H4', 'H2O2', 'C2H',
 input_features=['f','pv','zeta']
 
 # read in the data
-X, y, df, in_scaler, out_scaler = read_data('./data/tables_of_fgm.H5',input_features=input_features, labels = labels)
+X, y, df, in_scaler, out_scaler = read_hdf_data('./tables_of_fgm.H5',key='of_tables',in_labels=input_features, labels = labels)
 
 # split into train and test data
 X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.01)
-
 
 # %%
 print('set up ANN')

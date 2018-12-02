@@ -18,13 +18,13 @@ def read_csv_data(path = 'premix_data', labels = ['T','CH4','O2','CO2','CO','H2O
         df = df.append(tmp)
 
     input_df=df[['f','PV']]
-    # in_scaler = preprocessing.MinMaxScaler()
-    in_scaler = preprocessing.StandardScaler()
+    in_scaler = preprocessing.MinMaxScaler()
+    #in_scaler = preprocessing.StandardScaler()
     input_np = in_scaler.fit_transform(input_df)
 
     label_df=df[labels]
-    # out_scaler = preprocessing.MinMaxScaler()
-    out_scaler = preprocessing.StandardScaler()
+    out_scaler = preprocessing.MinMaxScaler()
+    #out_scaler = preprocessing.StandardScaler()
     label_np = out_scaler.fit_transform(label_df)
     # print('\n*******************************')
     # print('This is the order of the labels:')
@@ -32,6 +32,27 @@ def read_csv_data(path = 'premix_data', labels = ['T','CH4','O2','CO2','CO','H2O
     # print('*******************************\n')
     return input_np, label_np, df, in_scaler, out_scaler
 
+def read_hdf_data(path = 'premix_data',key='of_tables',in_labels=['zeta','f','pv'], labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']):
+    # read in the hdf5 file
+    try:
+        df = pd.read_hdf(path,key=key) 
+    except:
+        print('Check the data path and key') 
+
+    input_df=df[in_labels]
+    in_scaler = preprocessing.MinMaxScaler()
+    #in_scaler = preprocessing.StandardScaler()
+    input_np = in_scaler.fit_transform(input_df)
+
+    label_df=df[labels]
+    out_scaler = preprocessing.MinMaxScaler()
+    #out_scaler = preprocessing.StandardScaler()
+    label_np = out_scaler.fit_transform(label_df)
+    #print('\n*******************************')
+    #print('This is the order of the labels:')
+    #[print(f) for f in labels]
+    #print('*******************************\n')
+    return input_np, label_np, df, in_scaler, out_scaler
 
 if __name__ =="__main__":
     a,b,df, in_scaler, out_scaler=read_csv_data('data')
