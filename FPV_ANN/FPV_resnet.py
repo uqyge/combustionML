@@ -13,25 +13,29 @@ from keras.callbacks import ModelCheckpoint
 from resBlock import res_block
 from data_reader import read_hdf_data
 from writeANNProperties import writeANNProperties
+from keras import backend as K
 
 
 # define the labels
 
 # labels = ['T','CH4']
-# labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']
-labels = ['C2H3', 'C2H6', 'CH2', 'H2CN', 'C2H4', 'H2O2', 'C2H',
-       'CN', 'heatRelease', 'NCO', 'NNH', 'N2', 'AR', 'psi', 'CO', 'CH4',
-       'HNCO', 'CH2OH', 'HCCO', 'CH2CO', 'CH', 'mu', 'C2H2', 'C2H5', 'H2', 'T',
-       'PVs', 'O', 'O2', 'N2O', 'C', 'C3H7', 'CH2(S)', 'NH3', 'HO2', 'NO',
-       'HCO', 'NO2', 'OH', 'HCNO', 'CH3CHO', 'CH3', 'NH', 'alpha', 'CH3O',
-       'CO2', 'CH3OH', 'CH2CHO', 'CH2O', 'C3H8', 'HNO', 'NH2', 'HCN', 'H', 'N',
-       'H2O', 'HCCOH', 'HCNN']
+labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']
+# labels = ['C2H3', 'C2H6', 'CH2', 'H2CN', 'C2H4', 'H2O2', 'C2H',
+#        'CN', 'heatRelease', 'NCO', 'NNH', 'N2', 'AR', 'psi', 'CO', 'CH4',
+#        'HNCO', 'CH2OH', 'HCCO', 'CH2CO', 'CH', 'mu', 'C2H2', 'C2H5', 'H2', 'T',
+#        'PVs', 'O', 'O2', 'N2O', 'C', 'C3H7', 'CH2(S)', 'NH3', 'HO2', 'NO',
+#        'HCO', 'NO2', 'OH', 'HCNO', 'CH3CHO', 'CH3', 'NH', 'alpha', 'CH3O',
+#        'CO2', 'CH3OH', 'CH2CHO', 'CH2O', 'C3H8', 'HNO', 'NH2', 'HCN', 'H', 'N',
+#        'H2O', 'HCCOH', 'HCNN']
 
 
 input_features=['f','pv','zeta']
 
+scaler = 'Standard'
+
 # read in the data
-X, y, df, in_scaler, out_scaler = read_hdf_data('./tables_of_fgm.H5',key='of_tables',in_labels=input_features, labels = labels)
+X, y, df, in_scaler, out_scaler = read_hdf_data('./tables_of_fgm.H5',key='of_tables',
+                                                in_labels=input_features, labels = labels,scaler=scaler)
 
 # split into train and test data
 X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.01)
@@ -43,7 +47,7 @@ dim_input = X_train.shape[1]
 dim_label = y_train.shape[1]
 n_neuron = 100
 batch_size = 1024*32
-epochs = 2_000
+epochs = 1000
 vsplit = 0.1
 batch_norm = False
 
@@ -135,3 +139,13 @@ pred_data=pd.concat([X_test_df,predict_df],axis=1)
 
 test_data.to_hdf('sim_check.H5',key='test')
 pred_data.to_hdf('sim_check.H5',key='pred')
+
+# Save model
+sess = K.get_session()
+saver = tf.train.Saver(tf.global_variables())
+saver.save(sess, './exported/my_model')
+model.save('FPV_ANN.H5')
+
+
+# write the OpenFOAM ANNProperties file
+writeANNProperties(in_scaler,out_scaler,scaler)
