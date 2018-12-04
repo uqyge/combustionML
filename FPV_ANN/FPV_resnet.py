@@ -44,7 +44,7 @@ dim_input = X_train.shape[1]
 dim_label = y_train.shape[1]
 n_neuron = 100
 batch_size = 1024*32
-epochs = 2_000
+epochs = 200
 vsplit = 0.1
 batch_norm = False
 

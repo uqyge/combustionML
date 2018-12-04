@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b47b0bbf-9e0d-4fcd-b596-6e7967c55997" name="Default" comment="compare inference speed">
-      <change afterPath="$PROJECT_DIR$/FPV_ANN/of_tables.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FPV_ANN/post.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ildm/data/output.dat" afterDir="false" />
+    <list default="true" id="b47b0bbf-9e0d-4fcd-b596-6e7967c55997" name="Default" comment="add openfoam table parser">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ildm/ildm_plots.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/ildm/ildm_plots.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ildm/read_ildm.py" beforeDir="false" afterPath="$PROJECT_DIR$/ildm/read_ildm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FPV_ANN/FPV_resnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/FPV_ANN/FPV_resnet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FPV_ANN/post.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/FPV_ANN/post.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FPV_ANN/pre_precessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/FPV_ANN/pre_precessing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_opt import BayesianOptimization" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tmp.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,13 +31,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/FPV_ANN/pre_precessing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="7" column="10" lean-forward="true" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
+            <state relative-caret-position="72">
+              <caret line="4" column="3" selection-start-line="4" selection-start-column="3" selection-end-line="4" selection-end-column="3" />
               <folding>
-                <element signature="e#0#31#0" expanded="true" />
+                <element signature="e#195#232#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -46,10 +46,21 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/FPV_ANN/FPV_resnet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="218">
-              <caret line="121" column="12" selection-start-line="121" selection-start-column="12" selection-end-line="121" selection-end-column="12" />
+            <state relative-caret-position="180">
+              <caret line="46" column="12" lean-forward="true" selection-start-line="46" selection-start-column="12" selection-end-line="46" selection-end-column="12" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/FPV_ANN/resBlock.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <folding>
+                <element signature="e#0#30#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -96,12 +107,12 @@
         <option value="$PROJECT_DIR$/mayerJet/infer_time_compare.py" />
         <option value="$PROJECT_DIR$/FPV_ANN/csv2hdf.py" />
         <option value="$PROJECT_DIR$/FPV_ANN/test.py" />
-        <option value="$PROJECT_DIR$/FPV_ANN/pre_precessing.py" />
         <option value="$PROJECT_DIR$/FPV_ANN/tmp.py" />
         <option value="$PROJECT_DIR$/FPV_ANN/csv2hdf5.py" />
         <option value="$PROJECT_DIR$/FPV_ANN/data_reader.py" />
-        <option value="$PROJECT_DIR$/FPV_ANN/FPV_resnet.py" />
         <option value="$PROJECT_DIR$/ildm/read_ildm.py" />
+        <option value="$PROJECT_DIR$/FPV_ANN/pre_precessing.py" />
+        <option value="$PROJECT_DIR$/FPV_ANN/FPV_resnet.py" />
       </list>
     </option>
   </component>
@@ -131,6 +142,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -141,18 +153,12 @@
             <path>
               <item name="combustionML" type="b2602c69:ProjectViewProjectNode" />
               <item name="combustionML" type="462c0819:PsiDirectoryNode" />
-              <item name="FPV_ANN" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="combustionML" type="b2602c69:ProjectViewProjectNode" />
-              <item name="combustionML" type="462c0819:PsiDirectoryNode" />
               <item name="mayerJet" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -179,14 +185,11 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.read_ildm">
+  <component name="RunManager" selected="Python.FPV_resnet">
     <configuration name="FPV_resnet" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="combustionML" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/FPV_ANN" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -246,7 +249,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="data_reader" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="pre_precessing" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="combustionML" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -259,7 +262,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/FPV_ANN/data_reader.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/FPV_ANN/pre_precessing.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -272,6 +275,9 @@
       <module name="combustionML" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ildm" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -328,17 +334,17 @@
     <list>
       <item itemvalue="Python.csv2hdf5" />
       <item itemvalue="Python.FPV_resnet" />
-      <item itemvalue="Python.data_reader" />
       <item itemvalue="Python.tmp" />
       <item itemvalue="Python.read_ildm" />
+      <item itemvalue="Python.pre_precessing" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.read_ildm" />
         <item itemvalue="Python.FPV_resnet" />
+        <item itemvalue="Python.pre_precessing" />
+        <item itemvalue="Python.read_ildm" />
         <item itemvalue="Python.csv2hdf5" />
         <item itemvalue="Python.tmp" />
-        <item itemvalue="Python.data_reader" />
       </list>
     </recent_temporary>
   </component>
@@ -358,7 +364,9 @@
       <workItem from="1543354203489" duration="50000" />
       <workItem from="1543416461497" duration="11248000" />
       <workItem from="1543506103543" duration="694000" />
-      <workItem from="1543586960396" duration="3424000" />
+      <workItem from="1543586960396" duration="4071000" />
+      <workItem from="1543600961602" duration="1218000" />
+      <workItem from="1543934561959" duration="364000" />
     </task>
     <task id="LOCAL-00001" summary="add mayerjet case">
       <created>1542289437097</created>
@@ -423,11 +431,18 @@
       <option name="project" value="LOCAL" />
       <updated>1543591584241</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="add openfoam table parser">
+      <created>1543593388162</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1543593388162</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="20215000" />
+    <option name="totallyTimeSpent" value="22444000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -440,8 +455,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1920" y="27" width="1920" height="1020" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1736111" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17788461" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="0" show_stripe_button="false" />
@@ -456,7 +472,7 @@
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3276644" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5005342" side_tool="true" weight="0.44104308" />
-      <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49946582" visible="true" weight="0.4489796" />
+      <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49946582" visible="true" weight="0.45124716" />
       <window_info anchor="right" x="0" y="0" width="430" height="820" id="Documentation" order="0" sideWeight="0.5041152" side_tool="true" weight="0.32852563" />
       <window_info anchor="right" id="SciView" order="1" sideWeight="0.49588478" visible="true" weight="0.32852563" />
       <window_info anchor="right" id="Commander" order="2" weight="0.4" />
@@ -474,7 +490,8 @@
     <MESSAGE value="add mayerjet training case" />
     <MESSAGE value="compare inference speed" />
     <MESSAGE value="add plot for ildm" />
-    <option name="LAST_COMMIT_MESSAGE" value="add plot for ildm" />
+    <MESSAGE value="add openfoam table parser" />
+    <option name="LAST_COMMIT_MESSAGE" value="add openfoam table parser" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -601,13 +618,6 @@
       </provider>
     </entry>
     <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_3.py" />
-    <entry file="file://$PROJECT_DIR$/mayerJet/resBlock.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="22" selection-start-line="22" selection-end-line="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mayerJet/test1.csv" />
     <entry file="file://$PROJECT_DIR$/ANN_realgas/realgas_resnet.ipynb">
       <provider selected="true" editor-type-id="ipnb-editor">
@@ -669,30 +679,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/FPV_ANN/data_reader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="20" column="37" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/FPV_ANN/data_reader.py" />
     <entry file="file://$PROJECT_DIR$/ildm/data/output.dat">
       <provider selected="true" editor-type-id="LargeFileEditor">
         <state relative-caret-position="270">
           <caret line="24" column="29" selection-start-line="24" selection-start-column="29" selection-end-line="24" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/FPV_ANN/FPV_resnet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="121" column="12" selection-start-line="121" selection-start-column="12" selection-end-line="121" selection-end-column="12" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -708,10 +699,36 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/FPV_ANN/pre_precessing.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="7" column="10" lean-forward="true" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
+        <state relative-caret-position="72">
+          <caret line="4" column="3" selection-start-line="4" selection-start-column="3" selection-end-line="4" selection-end-column="3" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#195#232#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FPV_ANN/FPV_resnet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="46" column="12" lean-forward="true" selection-start-line="46" selection-start-column="12" selection-end-line="46" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mayerJet/resBlock.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="22" selection-start-line="22" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FPV_ANN/resBlock.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
           </folding>
         </state>
       </provider>
