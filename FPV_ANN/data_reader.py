@@ -57,7 +57,7 @@ def read_hdf_data(path = 'premix_data',key='of_tables',in_labels=['zeta','f','pv
 
     label_np = out_scaler.fit_transform(label_df)
     print('\n*******************************')
-    print('Scaler is %s\n' % scaler)
+    print('The scaler is %s\n' % scaler)
     print('This is the order of the labels:')
     [print(f) for f in labels]
     print('*******************************\n')

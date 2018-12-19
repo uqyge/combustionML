@@ -31,7 +31,8 @@ labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']
 
 input_features=['f','pv','zeta']
 
-scaler = 'Standard'
+# define the type of scaler: MinMax or Standard
+scaler = 'MinMax'
 
 # read in the data
 X, y, df, in_scaler, out_scaler = read_hdf_data('./tables_of_fgm.H5',key='of_tables',
@@ -45,9 +46,9 @@ print('set up ANN')
 # ANN parameters
 dim_input = X_train.shape[1]
 dim_label = y_train.shape[1]
-n_neuron = 100
+n_neuron = 400
 batch_size = 1024*32
-epochs = 1000
+epochs = 700
 vsplit = 0.1
 batch_norm = False
 
@@ -60,6 +61,8 @@ x = Dense(n_neuron, activation='relu')(inputs)
 # less then 2 res_block, there will be variance
 x = res_block(x, n_neuron, stage=1, block='a', bn=batch_norm)
 x = res_block(x, n_neuron, stage=1, block='b', bn=batch_norm)
+x = res_block(x, n_neuron, stage=1, block='c', bn=batch_norm)
+x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
 
 predictions = Dense(dim_label, activation='linear')(x)
 
@@ -113,7 +116,7 @@ predict_val = model.predict(X_test)
 X_test_df = pd.DataFrame(in_scaler.inverse_transform(X_test),columns=input_features)
 y_test_df = pd.DataFrame(out_scaler.inverse_transform(y_test),columns=labels)
 
-sp='CO'
+sp='PVs'
 
 predict_df = pd.DataFrame(out_scaler.inverse_transform(predict_val), columns=labels)
 
@@ -145,7 +148,6 @@ sess = K.get_session()
 saver = tf.train.Saver(tf.global_variables())
 saver.save(sess, './exported/my_model')
 model.save('FPV_ANN.H5')
-
 
 # write the OpenFOAM ANNProperties file
 writeANNProperties(in_scaler,out_scaler,scaler)
