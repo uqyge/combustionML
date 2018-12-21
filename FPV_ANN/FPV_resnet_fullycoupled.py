@@ -30,11 +30,10 @@ with open('GRI_species_order.txt', 'r') as f:
         # add item to the list
         labels.append(current_place)
 
-
-# append other fields: heatrelease, PVs, T
+# append other fields: heatrelease,  T, PVs
 labels.append('heatRelease')
-labels.append('PVs')
 labels.append('T')
+labels.append('PVs')
 
 input_features=['f','zeta','pv']
 
@@ -109,7 +108,6 @@ plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper right')
 plt.show()
-
 
 #%%
 model.load_weights("./tmp/weights.best.cntk.hdf5")

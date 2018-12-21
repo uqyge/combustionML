@@ -36,7 +36,7 @@ def writeANNProperties(in_scaler,out_scaler,scaler):
         ANNProperties.write('}\n')
 
         # write the number of species
-        ANNProperties.write('nr_features         %i;\n' % len(in_scaler.mean_))
+        ANNProperties.write('nr_features         %i;\n' % len(out_scaler.mean_))
 
     elif scaler == 'MinMax':
         ANNProperties.write('\nin_scale\n')
@@ -59,7 +59,7 @@ def writeANNProperties(in_scaler,out_scaler,scaler):
         ANNProperties.write('range_max         %s;\n' % max(in_scaler.feature_range))
 
         # write nr of species
-        ANNProperties.write('nr_features         %i;\n' % len(in_scaler.data_max_))
+        ANNProperties.write('nr_features         %i;\n' % len(out_scaler.data_max_))
 
     ANNProperties.write('\n// ************************************************************************* //')
 
