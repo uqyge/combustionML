@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b47b0bbf-9e0d-4fcd-b596-6e7967c55997" name="Default" comment="add a notebook for training">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FPV_ANN/fgm_nn_inhouse.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/FPV_ANN/fgm_nn_inhouse.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FPV_ANN/post.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/FPV_ANN/post.ipynb" afterDir="false" />
-    </list>
+    <list default="true" id="b47b0bbf-9e0d-4fcd-b596-6e7967c55997" name="Default" comment="add keras to tensorflow pb" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -342,7 +338,7 @@
       <workItem from="1543934561959" duration="5210000" />
       <workItem from="1545071928550" duration="1694000" />
       <workItem from="1546364181517" duration="2129000" />
-      <workItem from="1546424485776" duration="5823000" />
+      <workItem from="1546424485776" duration="7087000" />
     </task>
     <task id="LOCAL-00001" summary="add mayerjet case">
       <created>1542289437097</created>
@@ -428,11 +424,18 @@
       <option name="project" value="LOCAL" />
       <updated>1546520140178</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="add keras to tensorflow pb">
+      <created>1546529162201</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1546529162201</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="36936000" />
+    <option name="totallyTimeSpent" value="38200000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -446,7 +449,7 @@
   <component name="ToolWindowManager">
     <frame x="1920" y="27" width="1920" height="1020" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17735043" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17735043" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="0" show_stripe_button="false" />
@@ -461,7 +464,7 @@
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32993197" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3276644" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5005342" side_tool="true" weight="0.44104308" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="12" sideWeight="0.49946582" visible="true" weight="0.45464852" />
+      <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49946582" visible="true" weight="0.45464852" />
       <window_info anchor="right" x="0" y="0" width="430" height="820" id="Documentation" order="0" sideWeight="0.5041152" side_tool="true" weight="0.32852563" />
       <window_info anchor="right" id="SciView" order="1" sideWeight="0.49588478" weight="0.83653843" />
       <window_info anchor="right" id="Commander" order="2" weight="0.4" />
@@ -482,7 +485,8 @@
     <MESSAGE value="add openfoam table parser" />
     <MESSAGE value="add dropout" />
     <MESSAGE value="add a notebook for training" />
-    <option name="LAST_COMMIT_MESSAGE" value="add a notebook for training" />
+    <MESSAGE value="add keras to tensorflow pb" />
+    <option name="LAST_COMMIT_MESSAGE" value="add keras to tensorflow pb" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
