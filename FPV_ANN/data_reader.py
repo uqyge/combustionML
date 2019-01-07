@@ -31,6 +31,23 @@ def read_csv_data(path = 'premix_data', labels = ['T','CH4','O2','CO2','CO','H2O
     # print('*******************************\n')
     return input_np, label_np, df, in_scaler, out_scaler
 
+def read_h5_data(fileName, input_features, labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']):
+    df = pd.read_hdf(fileName)
+
+    input_df=df[input_features]
+    # in_scaler = preprocessing.MinMaxScaler()
+    in_scaler = preprocessing.StandardScaler()
+    input_np = in_scaler.fit_transform(input_df)
+
+    label_df=df[labels]
+    # out_scaler = preprocessing.MinMaxScaler()
+    out_scaler = preprocessing.StandardScaler()
+    label_np = out_scaler.fit_transform(label_df)
+    # print('\n*******************************')
+    # print('This is the order of the labels:')
+    # print('rho\nT\nthermo:mu\nCp\nthermo:psi\nthermo:alpha\nthermo:as')
+    # print('*******************************\n')
+    return input_np, label_np, df, in_scaler, out_scaler
 
 def read_hdf_data(path = 'premix_data',key='of_tables',in_labels=['zeta','f','pv'], labels = ['T'],scaler=None):
     # read in the hdf5 file
