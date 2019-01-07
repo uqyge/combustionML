@@ -22,7 +22,7 @@ import ast
 
 labels = []
 
-with open('GRI_species_order.txt', 'r') as f:
+with open('GRI_species_order_reduced.txt', 'r') as f:
     species = f.readlines()
     for line in species:
         # remove linebreak which is the last character of the string
@@ -35,6 +35,12 @@ labels.append('heatRelease')
 labels.append('T')
 labels.append('PVs')
 
+# tabulate psi, mu, alpha
+labels.append('psi')
+labels.append('mu')
+labels.append('alpha')
+
+# DO NOT CHANGE THIS ORDER!!
 input_features=['f','zeta','pv']
 
 # define the type of scaler: MinMax or Standard
@@ -53,8 +59,8 @@ print('set up ANN')
 # ANN parameters
 dim_input = X_train.shape[1]
 dim_label = y_train.shape[1]
-n_neuron = 400
-batch_size = 1024*4
+n_neuron = 500 #400
+batch_size = 1024
 epochs = 700
 vsplit = 0.1
 batch_norm = False
@@ -74,7 +80,7 @@ x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
 predictions = Dense(dim_label, activation='linear')(x)
 
 model = Model(inputs=inputs, outputs=predictions)
-model.compile(loss='mae', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='mse', optimizer='adam', metrics=['accuracy'])
 
 # checkpoint (save the best model based validate loss)
 filepath = "./tmp/weights.best.cntk.hdf5"
@@ -153,7 +159,7 @@ pred_data.to_hdf('sim_check.H5',key='pred')
 sess = K.get_session()
 saver = tf.train.Saver(tf.global_variables())
 saver.save(sess, './exported/my_model')
-model.save('FPV_ANN_full.H5')
+model.save('FPV_ANN_full_%s.H5' % scaler)
 
 # write the OpenFOAM ANNProperties file
 writeANNProperties(in_scaler,out_scaler,scaler)

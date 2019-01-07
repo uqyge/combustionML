@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 
 from sklearn import preprocessing
 
-
 #%%
 def read_csv_data(path = 'premix_data', labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']):
     df = pd.DataFrame()
@@ -63,8 +62,8 @@ def read_hdf_data(path = 'premix_data',key='of_tables',in_labels=['zeta','f','pv
     print('*******************************\n')
     return input_np, label_np, df, in_scaler, out_scaler
 
-if __name__ =="__main__":
-    a,b,df, in_scaler, out_scaler=read_csv_data('data')
-
-    ref=df.loc[df['p']==34]
-    x_test = in_scaler.transform(ref[['p','he']])
+# if __name__ =="__main__":
+#     a,b,df, in_scaler, out_scaler=read_csv_data('data')
+#
+#     ref=df.loc[df['p']==34]
+#     x_test = in_scaler.transform(ref[['p','he']])

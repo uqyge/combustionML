@@ -22,8 +22,8 @@ def writeANNProperties(in_scaler,out_scaler,scaler):
         ANNProperties.write('\nin_scale\n')
         ANNProperties.write('{\n')
         for i in range(len(in_scaler.mean_)):
-            mean_string = 'in_%i_mean      %f;\n' % (i + 1, in_scaler.mean_[i])
-            var_string = 'in_%i_var        %f;\n' % (i + 1, in_scaler.scale_[i])
+            mean_string = 'in_%i_mean      %.16f;\n' % (i + 1, in_scaler.mean_[i])
+            var_string = 'in_%i_var        %.16f;\n' % (i + 1, in_scaler.scale_[i])
             ANNProperties.write(mean_string)
             ANNProperties.write(var_string)
 
@@ -31,8 +31,8 @@ def writeANNProperties(in_scaler,out_scaler,scaler):
         ANNProperties.write('\nout_scale\n')
         ANNProperties.write('{\n')
         for i in range(len(out_scaler.mean_)):
-            ANNProperties.write('out_%i_mean      %f;\n' % (i + 1, out_scaler.mean_[i]))
-            ANNProperties.write('out_%i_var       %f;\n' % (i + 1, out_scaler.scale_[i]))
+            ANNProperties.write('out_%i_mean      %.16f;\n' % (i + 1, out_scaler.mean_[i]))
+            ANNProperties.write('out_%i_var       %.16f;\n' % (i + 1, out_scaler.scale_[i]))
         ANNProperties.write('}\n')
 
         # write the number of species
@@ -42,16 +42,16 @@ def writeANNProperties(in_scaler,out_scaler,scaler):
         ANNProperties.write('\nin_scale\n')
         ANNProperties.write('{\n')
         for i in range(len(in_scaler.data_max_)):
-            ANNProperties.write('in_%i_max       %f;\n' % (i + 1, in_scaler.data_max_[i]))
-            ANNProperties.write('in_%i_min       %f;\n' % (i + 1, in_scaler.data_min_[i]))
+            ANNProperties.write('in_%i_max       %.16f;\n' % (i + 1, in_scaler.data_max_[i]))
+            ANNProperties.write('in_%i_min       %.16f;\n' % (i + 1, in_scaler.data_min_[i]))
 
         ANNProperties.write('}\n')
 
         ANNProperties.write('\nout_scale\n')
         ANNProperties.write('{\n')
         for i in range(len(out_scaler.data_max_)):
-            ANNProperties.write('out_%i_max       %f;\n' % (i + 1, out_scaler.data_max_[i]))
-            ANNProperties.write('out_%i_min       %f;\n' % (i + 1, out_scaler.data_min_[i]))
+            ANNProperties.write('out_%i_max       %.16f;\n' % (i + 1, out_scaler.data_max_[i]))
+            ANNProperties.write('out_%i_min       %.16f;\n' % (i + 1, out_scaler.data_min_[i]))
         ANNProperties.write('}\n')
 
         ANNProperties.write('\n')
