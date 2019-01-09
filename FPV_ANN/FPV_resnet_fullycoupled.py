@@ -19,7 +19,7 @@ import ast
 
 ##########################
 # Parameters
-n_neuron = 20 #400
+n_neuron = 50 #400
 branches = 3
 scale = 3
 batch_size = 1024
@@ -30,7 +30,7 @@ batch_norm = False
 
 labels = []
 
-with open('GRI_species_order_reduced.txt', 'r') as f:
+with open('GRI_species_order_reduced', 'r') as f:
     species = f.readlines()
     for line in species:
         # remove linebreak which is the last character of the string
@@ -39,7 +39,7 @@ with open('GRI_species_order_reduced.txt', 'r') as f:
         labels.append(current_place)
 
 # append other fields: heatrelease,  T, PVs
-labels.append('heatRelease')
+#labels.append('heatRelease')
 labels.append('T')
 labels.append('PVs')
 
@@ -82,6 +82,8 @@ predictions = Dense(dim_label, activation='linear')(x)
 
 model = Model(inputs=inputs, outputs=predictions)
 model.compile(loss='mse', optimizer='adam', metrics=['accuracy'])
+# get the model summary
+model.summary()
 
 # checkpoint (save the best model based validate loss)
 filepath = "./tmp/weights.best.cntk.hdf5"
