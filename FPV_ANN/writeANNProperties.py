@@ -65,7 +65,7 @@ def writeANNProperties(in_scaler,out_scaler,scaler):
         ANNProperties.write('nr_features         %i;\n' % len(out_scaler.data_max_))
 
         ANNProperties.write('input_layer         //input_1;\n')
-        ANNProperties.write('output_layer         //dense_2;\n')
+        ANNProperties.write('output_layer        //dense_2;\n')
 
     ANNProperties.write('\n// ************************************************************************* //')
 

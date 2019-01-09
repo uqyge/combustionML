@@ -75,12 +75,6 @@ inputs = Input(shape=(dim_input,))#,name='input_1')
 # a layer instance is callable on a tensor, and returns a tensor
 x = Dense(n_neuron, activation='relu')(inputs)
 
-# less then 2 res_block, there will be variance
-# x = res_block(x, n_neuron, stage=1, block='a', bn=batch_norm)
-# x = res_block(x, n_neuron, stage=1, block='b', bn=batch_norm)
-# x = res_block(x, n_neuron, stage=1, block='c', bn=batch_norm)
-# x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
-
 x = res_block(x, scale, n_neuron, stage=1, block='a', bn=batch_norm,branches=branches)
 x = res_block(x, scale, n_neuron, stage=1, block='b', bn=batch_norm,branches=branches)
 
