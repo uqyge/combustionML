@@ -11,34 +11,51 @@ from keras.layers import Dense, Input
 from keras.callbacks import ModelCheckpoint
 
 from resBlock import res_block
-<<<<<<< HEAD
-from data_reader import read_hdf_data
+from data_reader import read_hdf_data, read_hdf_data_psi
 from writeANNProperties import writeANNProperties
 from keras import backend as K
-from data_reader import read_h5_data
-from writeANNProperties import writeANNProperties
 
+import ast
 
-# define the labels
+##########################
+# Parameters
+n_neuron = 20 #400
+branches = 3
+scale = 3
+batch_size = 1024
+epochs = 2000
+vsplit = 0.1
+batch_norm = False
+##########################
 
-# labels = ['T','CH4']
-labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']
-# labels = ['C2H3', 'C2H6', 'CH2', 'H2CN', 'C2H4', 'H2O2', 'C2H',
-#        'CN', 'heatRelease', 'NCO', 'NNH', 'N2', 'AR', 'psi', 'CO', 'CH4',
-#        'HNCO', 'CH2OH', 'HCCO', 'CH2CO', 'CH', 'mu', 'C2H2', 'C2H5', 'H2', 'T',
-#        'PVs', 'O', 'O2', 'N2O', 'C', 'C3H7', 'CH2(S)', 'NH3', 'HO2', 'NO',
-#        'HCO', 'NO2', 'OH', 'HCNO', 'CH3CHO', 'CH3', 'NH', 'alpha', 'CH3O',
-#        'CO2', 'CH3OH', 'CH2CHO', 'CH2O', 'C3H8', 'HNO', 'NH2', 'HCN', 'H', 'N',
-#        'H2O', 'HCCOH', 'HCNN']
+labels = []
 
+with open('GRI_species_order_reduced.txt', 'r') as f:
+    species = f.readlines()
+    for line in species:
+        # remove linebreak which is the last character of the string
+        current_place = line[:-1]
+        # add item to the list
+        labels.append(current_place)
 
-input_features=['f','pv','zeta']
+# append other fields: heatrelease,  T, PVs
+labels.append('heatRelease')
+labels.append('T')
+labels.append('PVs')
+
+# tabulate psi, mu, alpha
+labels.append('psi')
+labels.append('mu')
+labels.append('alpha')
+
+# DO NOT CHANGE THIS ORDER!!
+input_features=['f','zeta','pv']
 
 # define the type of scaler: MinMax or Standard
-scaler = 'MinMax'
+scaler = 'Standard'
 
 # read in the data
-X, y, df, in_scaler, out_scaler = read_hdf_data('./tables_of_fgm.H5',key='of_tables',
+X, y, df, in_scaler, out_scaler = read_hdf_data_psi('./tables_of_fgm.H5',key='of_tables',
                                                 in_labels=input_features, labels = labels,scaler=scaler)
 
 # split into train and test data
@@ -46,32 +63,25 @@ X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.01)
 
 # %%
 print('set up ANN')
+
 # ANN parameters
 dim_input = X_train.shape[1]
 dim_label = y_train.shape[1]
-n_neuron = 400
-batch_size = 1024*32
-epochs = 20
-vsplit = 0.1
-batch_norm = False
+
 
 # This returns a tensor
-inputs = Input(shape=(dim_input,))
+inputs = Input(shape=(dim_input,))#,name='input_1')
 
 # a layer instance is callable on a tensor, and returns a tensor
 x = Dense(n_neuron, activation='relu')(inputs)
 
-# less then 2 res_block, there will be variance
-x = res_block(x, n_neuron, stage=1, block='a', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='b', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='c', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
+x = res_block(x, scale, n_neuron, stage=1, block='a', bn=batch_norm,branches=branches)
+x = res_block(x, scale, n_neuron, stage=1, block='b', bn=batch_norm,branches=branches)
 
 predictions = Dense(dim_label, activation='linear')(x)
 
 model = Model(inputs=inputs, outputs=predictions)
-loss_type='mae'
-model.compile(loss=loss_type, optimizer='adam', metrics=['accuracy'])
+model.compile(loss='mse', optimizer='adam', metrics=['accuracy'])
 
 # checkpoint (save the best model based validate loss)
 filepath = "./tmp/weights.best.cntk.hdf5"
@@ -95,16 +105,6 @@ history = model.fit(
     callbacks=callbacks_list,
     shuffle=True)
 
-# loss
-fig = plt.figure()
-plt.semilogy(history.history['loss'])
-if vsplit:
-    plt.semilogy(history.history['val_loss'])
-plt.title(loss_type)
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper right')
-plt.show()
 
 
 #%%
@@ -122,23 +122,32 @@ y_test_df = pd.DataFrame(out_scaler.inverse_transform(y_test),columns=labels)
 
 sp='PVs'
 
-predict_df = pd.DataFrame(out_scaler.inverse_transform(predict_val), columns=labels)
+# loss
+fig = plt.figure()
+plt.semilogy(history.history['loss'])
+if vsplit:
+    plt.semilogy(history.history['val_loss'])
+plt.title('mse')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper right')
+plt.savefig('./exported/Loss_%s_%s_%i.eps' % (sp,scaler,n_neuron),format='eps')
+plt.show(block=False)
 
-# plt.figure()
-# plt.plot(X_test_df['f'], y_test_df[sp], 'r:')
-# plt.plot(X_test_df['f'], predict_df[sp], 'b-')
-# plt.show()
+predict_df = pd.DataFrame(out_scaler.inverse_transform(predict_val), columns=labels)
 
 plt.figure()
 plt.title('Error of %s ' % sp)
 plt.plot((y_test_df[sp] - predict_df[sp]) / y_test_df[sp])
 plt.title(sp)
-plt.show()
+plt.savefig('./exported/Error_%s_%s_%i.eps' % (sp,scaler,n_neuron),format='eps')
+plt.show(block=False)
 
 plt.figure()
 plt.scatter(predict_df[sp],y_test_df[sp],s=1)
-plt.title(sp)
-plt.show()
+plt.title('R2 for '+sp)
+plt.savefig('./exported/R2_%s_%s_%i.eps' % (sp,scaler,n_neuron),format='eps')
+plt.show(block=False)
 # %%
 a=(y_test_df[sp] - predict_df[sp]) / y_test_df[sp]
 test_data=pd.concat([X_test_df,y_test_df],axis=1)
@@ -151,7 +160,10 @@ pred_data.to_hdf('sim_check.H5',key='pred')
 sess = K.get_session()
 saver = tf.train.Saver(tf.global_variables())
 saver.save(sess, './exported/my_model')
-model.save('FPV_ANN.H5')
+model.save('FPV_ANN_tabulated_%s.H5' % scaler)
 
 # write the OpenFOAM ANNProperties file
 writeANNProperties(in_scaler,out_scaler,scaler)
+
+# Convert the model to
+#run -i k2tf.py --input_model='FPV_ANN_tabulated_Standard.H5' --output_model='exported/FPV_ANN_tabulated_Standard.pb'
