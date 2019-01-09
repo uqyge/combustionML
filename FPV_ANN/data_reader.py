@@ -82,7 +82,7 @@ def read_hdf_data(path = 'premix_data',key='of_tables',in_labels=['zeta','f','pv
     return input_np, label_np, df, in_scaler, out_scaler
 
 
-def read_hdf_data_psi(path = 'premix_data',key='of_tables',in_labels=['zeta','f','pv'], labels = ['T'], scaler=None):
+def read_hdf_data_psi(path = 'premix_data', key='of_tables', in_labels=['zeta','f','pv'], labels = ['T'], scaler = None):
     # read in the hdf5 file
     # AND COMPUTE PSI OF THE MIXTURE
     try:
@@ -100,15 +100,26 @@ def read_hdf_data_psi(path = 'premix_data',key='of_tables',in_labels=['zeta','f'
 
     # numpy array of species molar weights
     molar_weights_np = np.array([molar_weights[s] for s in all_species])
+    T_vector = df['T'].as_matrix()
+
+    # convert to ndarray
+    gri_mass_frac = df[all_species].as_matrix()
 
     # COMPUTE THE CORRECT PSI VALUE
     R_universal = 8.314459
+    psi_list = []
 
+    print('Start to compute psi ... ')
     # iterate over all rows
-    for index, row in df.iterrows():
-        R_m = R_universal * sum(row[all_species].values / molar_weights_np)
-        df['psi'].iloc[index] = 1 / (R_m * row['T'])
+    for index in range(0,df.shape[0]):
+        R_m = R_universal * sum(gri_mass_frac[index,:] / molar_weights_np)
+        #df['psi'].iloc[index] = 1 / (R_m * row['T'])
+        psi_list.append(1/(R_m * T_vector[index]))
+        # print(index)
 
+    # hand back the data to df
+    df['psi'] = psi_list
+    print('Done with psi!\n')
 
     input_df=df[in_labels]
 

@@ -11,7 +11,7 @@ from keras.layers import Dense, Input
 from keras.callbacks import ModelCheckpoint
 
 from resBlock import res_block
-from data_reader import read_hdf_data
+from data_reader import read_hdf_data, read_hdf_data_psi
 from writeANNProperties import writeANNProperties
 from keras import backend as K
 
@@ -55,7 +55,7 @@ input_features=['f','zeta','pv']
 scaler = 'Standard'
 
 # read in the data
-X, y, df, in_scaler, out_scaler = read_hdf_data('./tables_of_fgm.H5',key='of_tables',
+X, y, df, in_scaler, out_scaler = read_hdf_data_psi('./tables_of_fgm.H5',key='of_tables',
                                                 in_labels=input_features, labels = labels,scaler=scaler)
 
 # split into train and test data
