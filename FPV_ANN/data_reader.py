@@ -109,7 +109,7 @@ def read_hdf_data_psi(path = 'premix_data', key='of_tables', in_labels=['zeta','
     R_universal = 8.314459
     psi_list = []
 
-    print('Start to compute psi ... ')
+    print('Starting to compute psi ... ')
     # iterate over all rows
     for index in range(0,df.shape[0]):
         R_m = R_universal * sum(gri_mass_frac[index,:] / molar_weights_np)
