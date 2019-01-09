@@ -17,8 +17,16 @@ from keras import backend as K
 
 import ast
 
-# get the labels in the right order
-#labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs']
+##########################
+# Parameters
+n_neuron = 20 #400
+branches = 3
+scale = 3
+batch_size = 1024
+epochs = 2000
+vsplit = 0.1
+batch_norm = False
+##########################
 
 labels = []
 
@@ -44,7 +52,7 @@ labels.append('alpha')
 input_features=['f','zeta','pv']
 
 # define the type of scaler: MinMax or Standard
-scaler = 'MinMax'
+scaler = 'Standard'
 
 # read in the data
 X, y, df, in_scaler, out_scaler = read_hdf_data('./tables_of_fgm.H5',key='of_tables',
@@ -59,23 +67,22 @@ print('set up ANN')
 # ANN parameters
 dim_input = X_train.shape[1]
 dim_label = y_train.shape[1]
-n_neuron = 500 #400
-batch_size = 1024
-epochs = 700
-vsplit = 0.1
-batch_norm = False
+
 
 # This returns a tensor
-inputs = Input(shape=(dim_input,))
+inputs = Input(shape=(dim_input,))#,name='input_1')
 
 # a layer instance is callable on a tensor, and returns a tensor
 x = Dense(n_neuron, activation='relu')(inputs)
 
 # less then 2 res_block, there will be variance
-x = res_block(x, n_neuron, stage=1, block='a', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='b', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='c', bn=batch_norm)
-x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
+# x = res_block(x, n_neuron, stage=1, block='a', bn=batch_norm)
+# x = res_block(x, n_neuron, stage=1, block='b', bn=batch_norm)
+# x = res_block(x, n_neuron, stage=1, block='c', bn=batch_norm)
+# x = res_block(x, n_neuron, stage=1, block='d', bn=batch_norm)
+
+x = res_block(x, scale, n_neuron, stage=1, block='a', bn=batch_norm,branches=branches)
+x = res_block(x, scale, n_neuron, stage=1, block='b', bn=batch_norm,branches=branches)
 
 predictions = Dense(dim_label, activation='linear')(x)
 
@@ -104,16 +111,7 @@ history = model.fit(
     callbacks=callbacks_list,
     shuffle=True)
 
-# loss
-fig = plt.figure()
-plt.semilogy(history.history['loss'])
-if vsplit:
-    plt.semilogy(history.history['val_loss'])
-plt.title('mse')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper right')
-plt.show()
+
 
 #%%
 model.load_weights("./tmp/weights.best.cntk.hdf5")
@@ -130,23 +128,32 @@ y_test_df = pd.DataFrame(out_scaler.inverse_transform(y_test),columns=labels)
 
 sp='PVs'
 
-predict_df = pd.DataFrame(out_scaler.inverse_transform(predict_val), columns=labels)
+# loss
+fig = plt.figure()
+plt.semilogy(history.history['loss'])
+if vsplit:
+    plt.semilogy(history.history['val_loss'])
+plt.title('mse')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper right')
+plt.savefig('./exported/Loss_%s_%s_%i.eps' % (sp,scaler,n_neuron),format='eps')
+plt.show(block=False)
 
-# plt.figure()
-# plt.plot(X_test_df['f'], y_test_df[sp], 'r:')
-# plt.plot(X_test_df['f'], predict_df[sp], 'b-')
-# plt.show()
+predict_df = pd.DataFrame(out_scaler.inverse_transform(predict_val), columns=labels)
 
 plt.figure()
 plt.title('Error of %s ' % sp)
 plt.plot((y_test_df[sp] - predict_df[sp]) / y_test_df[sp])
 plt.title(sp)
-plt.show()
+plt.savefig('./exported/Error_%s_%s_%i.eps' % (sp,scaler,n_neuron),format='eps')
+plt.show(block=False)
 
 plt.figure()
 plt.scatter(predict_df[sp],y_test_df[sp],s=1)
-plt.title(sp)
-plt.show()
+plt.title('R2 for '+sp)
+plt.savefig('./exported/R2_%s_%s_%i.eps' % (sp,scaler,n_neuron),format='eps')
+plt.show(block=False)
 # %%
 a=(y_test_df[sp] - predict_df[sp]) / y_test_df[sp]
 test_data=pd.concat([X_test_df,y_test_df],axis=1)
@@ -159,7 +166,10 @@ pred_data.to_hdf('sim_check.H5',key='pred')
 sess = K.get_session()
 saver = tf.train.Saver(tf.global_variables())
 saver.save(sess, './exported/my_model')
-model.save('FPV_ANN_full_%s.H5' % scaler)
+model.save('FPV_ANN_tabulated_%s.H5' % scaler)
 
 # write the OpenFOAM ANNProperties file
 writeANNProperties(in_scaler,out_scaler,scaler)
+
+# Convert the model to
+#run -i k2tf.py --input_model='FPV_ANN_tabulated_Standard.H5' --output_model='exported/FPV_ANN_tabulated_Standard.pb'

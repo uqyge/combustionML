@@ -11,6 +11,8 @@
 *.uff
 *.pd
 *.H5
+*.pb
+
 __pychache__
 my_model.*
 export
