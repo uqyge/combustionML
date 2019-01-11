@@ -19,13 +19,17 @@ import ast
 
 ##########################
 # Parameters
-n_neuron = 50 #400
+n_neuron = 100 #400
 branches = 3
 scale = 3
-batch_size = 1024
+batch_size = 1024*10
 epochs = 2000
 vsplit = 0.1
 batch_norm = False
+
+# define the type of scaler: MinMax or Standard
+scaler = 'MinMax' # 'Standard'
+
 ##########################
 
 labels = []
@@ -51,8 +55,6 @@ labels.append('alpha')
 # DO NOT CHANGE THIS ORDER!!
 input_features=['f','zeta','pv']
 
-# define the type of scaler: MinMax or Standard
-scaler = 'Standard'
 
 # read in the data
 X, y, df, in_scaler, out_scaler = read_hdf_data_psi('./tables_of_fgm.H5',key='of_tables',
@@ -77,6 +79,7 @@ x = Dense(n_neuron, activation='relu')(inputs)
 
 x = res_block(x, scale, n_neuron, stage=1, block='a', bn=batch_norm,branches=branches)
 x = res_block(x, scale, n_neuron, stage=1, block='b', bn=batch_norm,branches=branches)
+#x = res_block(x, scale, n_neuron, stage=1, block='c', bn=batch_norm,branches=branches)
 
 predictions = Dense(dim_label, activation='linear')(x)
 
