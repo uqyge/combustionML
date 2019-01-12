@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b47b0bbf-9e0d-4fcd-b596-6e7967c55997" name="Default" comment="add keras to tensorflow pb">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -347,7 +348,7 @@
       <workItem from="1545071928550" duration="1694000" />
       <workItem from="1546364181517" duration="2129000" />
       <workItem from="1546424485776" duration="7087000" />
-      <workItem from="1546786529152" duration="158000" />
+      <workItem from="1546786529152" duration="770000" />
     </task>
     <task id="LOCAL-00001" summary="add mayerjet case">
       <created>1542289437097</created>
@@ -444,7 +445,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="38358000" />
+    <option name="totallyTimeSpent" value="38970000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
