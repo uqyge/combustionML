@@ -5,96 +5,33 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
-// using namespace std;
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/foreach.hpp>
 
-class TrainingData
+using boost::property_tree::ptree;
+using boost::property_tree::read_json;
+
+template <typename T>
+std::vector<T> as_vector(ptree const &pt, ptree::key_type const &key)
 {
-  public:
-	TrainingData(const std::string filename);
-	bool isEof(void)
-	{
-		return m_trainingDataFile.eof();
-	}
-	void getTopology(std::vector<unsigned> &topology);
-
-	// Returns the number of input values read from the file:
-	unsigned getNextInputs(std::vector<double> &inputVals);
-	unsigned getTargetOutputs(std::vector<double> &targetOutputVals);
-
-  private:
-	std::ifstream m_trainingDataFile;
-};
-
-void TrainingData::getTopology(std::vector<unsigned> &topology)
-{
-	std::string line;
-	std::string label;
-
-	getline(m_trainingDataFile, line);
-	std::stringstream ss(line);
-	ss >> label;
-	if (this->isEof() || label.compare("topology:") != 0)
-	{
-		abort();
-	}
-
-	while (!ss.eof())
-	{
-		unsigned n;
-		ss >> n;
-		topology.push_back(n);
-	}
-	return;
+	std::vector<T> r;
+	for (auto &item : pt.get_child(key))
+		r.push_back(item.second.get_value<T>());
+	return r;
 }
 
-TrainingData::TrainingData(const std::string filename)
+template <typename T>
+void showVectorVals(std::string label, std::vector<T> &v)
 {
-	m_trainingDataFile.open(filename.c_str());
-}
-
-unsigned TrainingData::getNextInputs(std::vector<double> &inputVals)
-{
-	inputVals.clear();
-
-	std::string line;
-	getline(m_trainingDataFile, line);
-	std::stringstream ss(line);
-
-	std::string label;
-	ss >> label;
-	if (label.compare("in:") == 0)
+	std::cout << label << " ";
+	for (unsigned i = 0; i < v.size(); ++i)
 	{
-		double oneValue;
-		while (ss >> oneValue)
-		{
-			inputVals.push_back(oneValue);
-		}
+		std::cout << v[i] << " ";
 	}
-
-	return inputVals.size();
-}
-
-unsigned TrainingData::getTargetOutputs(std::vector<double> &targetOutputVals)
-{
-	targetOutputVals.clear();
-
-	std::string line;
-	getline(m_trainingDataFile, line);
-	std::stringstream ss(line);
-
-	std::string label;
-	ss >> label;
-	if (label.compare("out:") == 0)
-	{
-		double oneValue;
-		while (ss >> oneValue)
-		{
-			targetOutputVals.push_back(oneValue);
-		}
-	}
-
-	return targetOutputVals.size();
+	std::cout << std::endl;
 }
 
 struct Connection
@@ -115,12 +52,10 @@ class Neuron
 	Neuron(unsigned numOutputs, unsigned myIndex);
 	void setOutputVal(double val) { m_outputVal = val; }
 	double getOutputVal(void) const { return m_outputVal; }
-	void feedForward(const Layer &prevLayer);
+	void feedForward(const Layer &prevLayer, std::string);
 
   private:
-	static double eta;   // [0.0...1.0] overall net training rate
-	static double alpha; // [0.0...n] multiplier of last weight change [momentum]
-	static double transferFunction(double x);
+	static double transferFunction(double x, std::string actFunc);
 	// randomWeight: 0 - 1
 	static double randomWeight(void) { return rand() / double(RAND_MAX); }
 	double m_outputVal;
@@ -128,16 +63,21 @@ class Neuron
 	unsigned m_myIndex;
 };
 
-double Neuron::eta = 0.15;  // overall net learning rate
-double Neuron::alpha = 0.5; // momentum, multiplier of last deltaWeight, [0.0..n]
-
-double Neuron::transferFunction(double x)
+double Neuron::transferFunction(double x, std::string actFunc = "relu")
 {
 	// tanh - output range [-1.0..1.0]
-	return tanh(x);
+	// return tanh(x);
+	if (actFunc == "relu")
+	{
+		return std::max(0.0, x);
+	}
+	else if (actFunc == "linear")
+	{
+		return x;
+	}
 }
 
-void Neuron::feedForward(const Layer &prevLayer)
+void Neuron::feedForward(const Layer &prevLayer, std::string actFunc = "relu")
 {
 	double sum = 0.0;
 
@@ -150,7 +90,7 @@ void Neuron::feedForward(const Layer &prevLayer)
 			   prevLayer[n].m_outputWeights[m_myIndex].weight;
 	}
 
-	m_outputVal = Neuron::transferFunction(sum);
+	m_outputVal = Neuron::transferFunction(sum, actFunc);
 }
 
 Neuron::Neuron(unsigned numOutputs, unsigned myIndex)
@@ -170,16 +110,11 @@ class Net
 	Net(const std::vector<unsigned> &topology);
 	void feedForward(const std::vector<double> &inputVals);
 	void getResults(std::vector<double> &resultVals) const;
-	double getRecentAverageError(void) const { return m_recentAverageError; }
 
   private:
 	std::vector<Layer> m_layers; //m_layers[layerNum][neuronNum]
 	double m_error;
-	double m_recentAverageError;
-	static double m_recentAverageSmoothingFactor;
 };
-
-double Net::m_recentAverageSmoothingFactor = 100.0; // Number of training samples to average over
 
 void Net::getResults(std::vector<double> &resultVals) const
 {
@@ -193,7 +128,7 @@ void Net::getResults(std::vector<double> &resultVals) const
 
 void Net::feedForward(const std::vector<double> &inputVals)
 {
-	// Check the num of inputVals euqal to neuronnum expect bias
+	// Check the num of inputVals equal to neuronnum expect bias
 	assert(inputVals.size() == m_layers[0].size() - 1);
 
 	// Assign {latch} the input values into the input neurons
@@ -203,18 +138,29 @@ void Net::feedForward(const std::vector<double> &inputVals)
 	}
 
 	// Forward propagate
-	for (unsigned layerNum = 1; layerNum < m_layers.size(); ++layerNum)
+	for (unsigned layerNum = 1; layerNum < m_layers.size() - 1; ++layerNum)
 	{
 		Layer &prevLayer = m_layers[layerNum - 1];
 		for (unsigned n = 0; n < m_layers[layerNum].size() - 1; ++n)
 		{
 			m_layers[layerNum][n].feedForward(prevLayer);
 		}
+		std::cout << layerNum << "/" << m_layers.size() << '\n';
+	}
+	{
+		unsigned linearOutputLayer = m_layers.size() - 1;
+		Layer &prevLayer = m_layers[linearOutputLayer - 1];
+
+		for (unsigned n = 0; n < m_layers[linearOutputLayer].size() - 1; ++n)
+		{
+			m_layers[linearOutputLayer][n].feedForward(prevLayer, "linear");
+		}
 	}
 }
 Net::Net(const std::vector<unsigned> &topology)
 {
 	unsigned numLayers = topology.size();
+	std::cout << "topo size:" << numLayers << '\n';
 	for (unsigned layerNum = 0; layerNum < numLayers; ++layerNum)
 	{
 		m_layers.push_back(Layer());
@@ -227,7 +173,7 @@ Net::Net(const std::vector<unsigned> &topology)
 		for (unsigned neuronNum = 0; neuronNum <= topology[layerNum]; ++neuronNum)
 		{
 			m_layers.back().push_back(Neuron(numOutputs, neuronNum));
-			std::cout << "Mad a Neuron!" << std::endl;
+			std::cout << "Mad a Neuron!" << neuronNum << std::endl;
 		}
 
 		// Force the bias node's output value to 1.0. It's the last neuron created above
@@ -235,59 +181,59 @@ Net::Net(const std::vector<unsigned> &topology)
 	}
 }
 
-void showVectorVals(std::string label, std::vector<double> &v)
-{
-	std::cout << label << " ";
-	for (unsigned i = 0; i < v.size(); ++i)
-	{
-		std::cout << v[i] << " ";
-	}
-	std::cout << std::endl;
-}
-void showVectorVals(std::string label, std::vector<unsigned> &v)
-{
-	std::cout << label << " ";
-	for (unsigned i = 0; i < v.size(); ++i)
-	{
-		std::cout << v[i] << " ";
-	}
-	std::cout << std::endl;
-}
-
 int main()
 {
-	TrainingData trainData("trainingData.txt");
-	//e.g., {3, 2, 1 }
-	std::vector<unsigned> topology;
-	// topology.push_back(2);
-	// topology.push_back(4);
-	// topology.push_back(1);
+	std::ifstream myfile;
+	// myfile.open("test.json");
+	myfile.open("data.json");
+	std::stringstream buffer;
+	buffer << myfile.rdbuf();
+	std::cout << buffer.str() << '\n';
 
-	trainData.getTopology(topology);
+	// Read json.
+	ptree pt2;
+	read_json(buffer, pt2);
+	std::vector<std::vector<float>> layer1;
+	// BOOST_FOREACH (ptree::value_type &v, pt2.get_child("l1"))
+	for (auto &v : pt2.get_child("l1"))
+	{
+		std::vector<float> tmp;
+		tmp.clear();
+		for (auto &i : v.second)
+		{
+			tmp.push_back(i.second.get_value<float>());
+		}
+		layer1.push_back(tmp);
+		// showVectorVals<float>("wudi:", tmp);
+	}
+	for (auto &i : layer1)
+	{
+		showVectorVals<float>("jimo:", i);
+	}
+
+	std::vector<unsigned> topology;
+	topology = as_vector<unsigned>(pt2, "topology");
+	showVectorVals<unsigned>(":json read topology", topology);
 	Net myNet(topology);
-	showVectorVals(": Topology :", topology);
 
 	std::vector<double> inputVals, targetVals, resultVals;
 	int trainingPass = 0;
-	while (!trainData.isEof())
+	while (trainingPass < 1)
 	{
 		++trainingPass;
-		std::cout << std::endl
-				  << "Pass" << trainingPass << "\n";
+		std::cout << "Pass:" << trainingPass << "\n";
 
-		// Get new input data and feed it forward:
-		if (trainData.getNextInputs(inputVals) != topology[0])
-			break;
-		showVectorVals(": Inputs :", inputVals);
+		inputVals = as_vector<double>(pt2, "in");
+		showVectorVals<double>(": Inputs :", inputVals);
 		myNet.feedForward(inputVals);
 
 		// Collect the net's actual results:
 		myNet.getResults(resultVals);
-		showVectorVals("Outputs:", resultVals);
+		showVectorVals<double>("Outputs:", resultVals);
 
 		// Train the net what the outputs should have been:
-		trainData.getTargetOutputs(targetVals);
-		showVectorVals("Targets:", targetVals);
+		targetVals = as_vector<double>(pt2, "out");
+		showVectorVals<double>("Targets:", targetVals);
 		assert(targetVals.size() == topology.back());
 	}
 
