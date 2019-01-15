@@ -98,13 +98,11 @@ void Neuron::feedForward(const Layer &prevLayer, std::string actFunc = "relu")
 
 	for (unsigned n = 0; n < prevLayer.size(); ++n)
 	{
-		std::cout << n << '\n';
 		sum += prevLayer[n].getOutputVal() *
 			   prevLayer[n].m_outputWeights[m_myIndex].weight;
 	}
 
 	m_outputVal = Neuron::transferFunction(sum, actFunc);
-	std::cout << sum << "m_out:" << m_outputVal << '\n';
 }
 
 Neuron::Neuron(unsigned numOutputs, unsigned myIndex)
@@ -124,7 +122,6 @@ Neuron::Neuron(std::vector<float> connectionWeights, unsigned myIndex)
 	{
 		m_outputWeights.push_back(Connection());
 		m_outputWeights.back().weight = v;
-		std::cout << v << '\n';
 	}
 
 	m_myIndex = myIndex;
@@ -134,14 +131,12 @@ Neuron::Neuron(std::vector<float> connectionWeights, unsigned myIndex)
 class Net
 {
   public:
-	Net(const std::vector<unsigned> &topology);
 	Net(const std::vector<std::vector<std::vector<float>>> &modelWeights);
 	void feedForward(const std::vector<double> &inputVals);
 	void getResults(std::vector<double> &resultVals) const;
 
   private:
 	std::vector<Layer> m_layers; //m_layers[layerNum][neuronNum]
-	double m_error;
 };
 
 void Net::getResults(std::vector<double> &resultVals) const
@@ -174,46 +169,15 @@ void Net::feedForward(const std::vector<double> &inputVals)
 			// std::cout << "n:" << n << '\n';
 			m_layers[layerNum][n].feedForward(prevLayer, "relu");
 		}
-		std::cout << layerNum << "/" << m_layers.size() << '\n';
 	}
+	//output layer
 	{
 		unsigned linearOutputLayer = m_layers.size() - 1;
 		Layer &prevLayer = m_layers[linearOutputLayer - 1];
-
-		for (unsigned n = 0; n < m_layers[linearOutputLayer].size(); ++n)
+		for (auto &n : m_layers[linearOutputLayer])
 		{
-			// std::cout << "f n:" << n << '\n';
-			m_layers[linearOutputLayer][n].feedForward(prevLayer, "linear");
+			n.feedForward(prevLayer, "linear");
 		}
-		// for (auto &n : m_layers[linearOutputLayer])
-		// {
-		// 	std::cout << "wudi\n";
-		// 	n.feedForward(prevLayer);
-		// }
-	}
-}
-
-Net::Net(const std::vector<unsigned> &topology)
-{
-	unsigned numLayers = topology.size();
-	std::cout << "topo size:" << numLayers << '\n';
-	for (unsigned layerNum = 0; layerNum < numLayers; ++layerNum)
-	{
-		m_layers.push_back(Layer());
-		// numOutputs of layer[i] is the numInputs of layer[i+1]
-		// numOutputs of last layer is 0
-		unsigned numOutputs = layerNum == topology.size() - 1 ? 0 : topology[layerNum + 1];
-
-		// We have made a new Layer, now fill it ith neurons, and
-		// add a bias neuron to the layer:
-		for (unsigned neuronNum = 0; neuronNum <= topology[layerNum]; ++neuronNum)
-		{
-			m_layers.back().push_back(Neuron(numOutputs, neuronNum));
-			std::cout << "Mad a Neuron! Index:" << neuronNum << std::endl;
-		}
-
-		// Force the bias node's output value to 1.0. It's the last neuron created above
-		m_layers.back().back().setOutputVal(1.0);
 	}
 }
 
@@ -225,19 +189,13 @@ Net::Net(const std::vector<std::vector<std::vector<float>>> &modelWeight)
 		std::cout << "layer:" << layerNum << '\n';
 		m_layers.push_back(Layer());
 
-		// unsigned numOutputs = modelWeight[layerNum][0].size();
 		std::vector<std::vector<float>> layerWeights = modelWeight[layerNum];
-
 		for (unsigned neuronNum = 0; neuronNum < modelWeight[layerNum].size(); ++neuronNum)
 		{
 			m_layers.back().push_back(Neuron(layerWeights[neuronNum], neuronNum));
-			std::cout << "Mad a Neuron! Index:" << neuronNum << std::endl;
+			// std::cout << "Mad a Neuron! Index:" << neuronNum << std::endl;
 		}
 		m_layers.back().back().setOutputVal(1.0);
-
-		// m_layers.back().push_back(Neuron(numOutputs, modelWeight[layerNum].size()));
-		// m_layers.back().back().setOutputVal(0.0);
-		// std::cout << "Mad a bias Neuron! Index:" << modelWeight[layerNum].size() << std::endl;
 	}
 	//output layer
 	std::cout << "layer:output\n";
@@ -245,13 +203,10 @@ Net::Net(const std::vector<std::vector<std::vector<float>>> &modelWeight)
 	for (unsigned neuronNum = 0; neuronNum < modelWeight[numLayers - 1][0].size(); ++neuronNum)
 	{
 		m_layers.back().push_back(Neuron(0, neuronNum));
-		std::cout << "Mad a Neuron! Index:" << neuronNum << std::endl;
+		// std::cout << "Mad a Neuron! Index:" << neuronNum << std::endl;
 	}
 	m_layers.back().back().setOutputVal(1.0);
 
-	// m_layers.back().push_back(Neuron(0, modelWeight[numLayers - 1][0].size()));
-	// m_layers.back().back().setOutputVal(0.0);
-	// std::cout << "Mad a bias Neuron! Index:" << modelWeight[numLayers - 1][0].size() << std::endl;
 	assert(m_layers.size() == (modelWeight.size() + 1));
 }
 
@@ -278,13 +233,9 @@ int main()
 	modelWeights.push_back(layer2);
 	modelWeights.push_back(output);
 
-	for (auto &v : modelWeights)
-	{
-		std::cout << v.size() << '\t' << v[0].size() << '\n';
-	}
 	Net myNet(modelWeights);
 
-	std::vector<double> inputVals, targetVals, resultVals;
+	std::vector<double> inputVals, resultVals;
 	int trainingPass = 0;
 	while (trainingPass < 1)
 	{
@@ -299,9 +250,6 @@ int main()
 		myNet.getResults(resultVals);
 		showVectorVals<double>("Outputs:", resultVals);
 
-		// Train the net what the outputs should have been:
-		targetVals = as_vector<double>(pt2, "out");
-		showVectorVals<double>("Targets:", targetVals);
 		// assert(targetVals.size() == topology.back());
 	}
 
