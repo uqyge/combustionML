@@ -134,6 +134,7 @@ class Net
 	Net(const std::vector<std::vector<std::vector<float>>> &modelWeights);
 	void feedForward(const std::vector<double> &inputVals);
 	void getResults(std::vector<double> &resultVals) const;
+	bool infer(std::vector<double> &data_in, std::vector<double> &out);
 
   private:
 	std::vector<Layer> m_layers; //m_layers[layerNum][neuronNum]
@@ -179,6 +180,29 @@ void Net::feedForward(const std::vector<double> &inputVals)
 			n.feedForward(prevLayer, "linear");
 		}
 	}
+}
+
+bool Net::infer(std::vector<double> &data_in, std::vector<double> &out)
+{
+	std::vector<double> inputVals, resultVals;
+	int trainingPass = 0;
+	while (trainingPass < 1)
+	{
+		++trainingPass;
+		std::cout << "Pass:" << trainingPass << "\n";
+
+		inputVals = data_in;
+
+		this->feedForward(inputVals);
+
+		// Collect the net's actual results:
+		this->getResults(resultVals);
+		// showVectorVals<double>("Outputs:", resultVals);
+
+		// assert(targetVals.size() == topology.back());
+	}
+	out = resultVals;
+	return 0;
 }
 
 Net::Net(const std::vector<std::vector<std::vector<float>>> &modelWeight)
@@ -236,22 +260,26 @@ int main()
 	Net myNet(modelWeights);
 
 	std::vector<double> inputVals, resultVals;
-	int trainingPass = 0;
-	while (trainingPass < 1)
-	{
-		++trainingPass;
-		std::cout << "Pass:" << trainingPass << "\n";
+	// int trainingPass = 0;
+	// while (trainingPass < 1)
+	// {
+	// 	++trainingPass;
+	// 	std::cout << "Pass:" << trainingPass << "\n";
 
-		inputVals = as_vector<double>(pt2, "in");
-		showVectorVals<double>(": Inputs :", inputVals);
-		myNet.feedForward(inputVals);
+	// 	inputVals = as_vector<double>(pt2, "in");
+	// 	showVectorVals<double>(": Inputs :", inputVals);
+	// 	myNet.feedForward(inputVals);
 
-		// Collect the net's actual results:
-		myNet.getResults(resultVals);
-		showVectorVals<double>("Outputs:", resultVals);
+	// 	// Collect the net's actual results:
+	// 	myNet.getResults(resultVals);
+	// 	showVectorVals<double>("Outputs:", resultVals);
 
-		// assert(targetVals.size() == topology.back());
-	}
+	// 	// assert(targetVals.size() == topology.back());
+	// }
+	inputVals = as_vector<double>(pt2, "in");
+	showVectorVals<double>(": Inputs :", inputVals);
+	myNet.infer(inputVals, resultVals);
+	showVectorVals<double>("Outputs:", resultVals);
 
 	std::cout << std::endl
 			  << "Done" << std::endl;
