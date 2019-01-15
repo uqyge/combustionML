@@ -5,6 +5,8 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <chrono>
+#include <ctime>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -186,10 +188,12 @@ bool Net::infer(std::vector<double> &data_in, std::vector<double> &out)
 {
 	std::vector<double> inputVals, resultVals;
 	int trainingPass = 0;
-	while (trainingPass < 1)
+	auto t_start = std::chrono::high_resolution_clock::now();
+
+	while (trainingPass < 1e6)
 	{
 		++trainingPass;
-		std::cout << "Pass:" << trainingPass << "\n";
+		// std::cout << "Pass:" << trainingPass << "\n";
 
 		inputVals = data_in;
 
@@ -201,6 +205,9 @@ bool Net::infer(std::vector<double> &data_in, std::vector<double> &out)
 
 		// assert(targetVals.size() == topology.back());
 	}
+	auto t_end = std::chrono::high_resolution_clock::now();
+	auto total = std::chrono::duration<float, std::milli>(t_end - t_start).count();
+	std::cout << "totol time is " << total << "ms.\n";
 	out = resultVals;
 	return 0;
 }
