@@ -38,12 +38,14 @@ def res_block(input_tensor, scale, n_neuron, stage, block, bn=False, branches=0)
     conv_name_base = 'res' + str(stage) + block + '_branch'
     bn_name_base = 'bn' + str(stage) + block + '_branch'
 
-    #     scale = 2
+    # scale = 2
     x = Dense(scale * n_neuron, name=conv_name_base + '2a')(input_tensor)
     if bn:
         x = BatchNormalization(axis=-1, name=bn_name_base + '2a')(x)
     x = Activation('relu')(x)
-    dp1 = 0.
+
+    dp1 = 0.1
+
     if dp1 > 0:
         x = Dropout(dp1)(x)
 
