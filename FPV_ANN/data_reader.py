@@ -100,6 +100,7 @@ def read_hdf_data_psi(path = 'premix_data', key='of_tables', in_labels=['zeta','
 
     # numpy array of species molar weights
     molar_weights_np = np.array([molar_weights[s] for s in all_species])
+    molar_weights_np = molar_weights_np/ 1000   # conversion from g to kg! This is needed for OpenFOAM
     T_vector = df['T'].as_matrix()
 
     # convert to ndarray

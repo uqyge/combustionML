@@ -10,25 +10,26 @@ from keras.models import Model
 from keras.layers import Dense, Input
 from keras.callbacks import ModelCheckpoint
 
-from resBlock import res_block
+from resBlock import res_block, res_block_org
 from data_reader import read_hdf_data, read_hdf_data_psi
 from writeANNProperties import writeANNProperties
 from keras import backend as K
+from keras.models import load_model
 
 import ast
 
 ##########################
 # Parameters
-n_neuron = 100 #400
+n_neuron = 100
 branches = 3
 scale = 3
-batch_size = 1024*10
+batch_size = 1024*1
 epochs = 2000
 vsplit = 0.1
 batch_norm = False
 
 # define the type of scaler: MinMax or Standard
-scaler = 'MinMax' # 'Standard'
+scaler = 'Standard' # 'Standard' 'MinMax'
 
 ##########################
 
@@ -79,7 +80,7 @@ x = Dense(n_neuron, activation='relu')(inputs)
 
 x = res_block(x, scale, n_neuron, stage=1, block='a', bn=batch_norm,branches=branches)
 x = res_block(x, scale, n_neuron, stage=1, block='b', bn=batch_norm,branches=branches)
-#x = res_block(x, scale, n_neuron, stage=1, block='c', bn=batch_norm,branches=branches)
+x = res_block(x, scale, n_neuron, stage=1, block='c', bn=batch_norm,branches=branches)
 
 predictions = Dense(dim_label, activation='linear')(x)
 
@@ -109,8 +110,6 @@ history = model.fit(
     verbose=2,
     callbacks=callbacks_list,
     shuffle=True)
-
-
 
 #%%
 model.load_weights("./tmp/weights.best.cntk.hdf5")
