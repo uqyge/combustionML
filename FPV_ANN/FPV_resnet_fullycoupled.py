@@ -19,18 +19,22 @@ import ast
 
 ##########################
 # Parameters
-n_neuron = 20 #400
+n_neuron = 100 #400
 branches = 3
 scale = 3
-batch_size = 1024
+batch_size = 1024*10
 epochs = 2000
 vsplit = 0.1
 batch_norm = False
+
+# define the type of scaler: MinMax or Standard
+scaler = 'MinMax' # 'Standard'
+
 ##########################
 
 labels = []
 
-with open('GRI_species_order_reduced.txt', 'r') as f:
+with open('GRI_species_order_reduced', 'r') as f:
     species = f.readlines()
     for line in species:
         # remove linebreak which is the last character of the string
@@ -39,7 +43,7 @@ with open('GRI_species_order_reduced.txt', 'r') as f:
         labels.append(current_place)
 
 # append other fields: heatrelease,  T, PVs
-labels.append('heatRelease')
+#labels.append('heatRelease')
 labels.append('T')
 labels.append('PVs')
 
@@ -51,8 +55,6 @@ labels.append('alpha')
 # DO NOT CHANGE THIS ORDER!!
 input_features=['f','zeta','pv']
 
-# define the type of scaler: MinMax or Standard
-scaler = 'Standard'
 
 # read in the data
 X, y, df, in_scaler, out_scaler = read_hdf_data_psi('./tables_of_fgm.H5',key='of_tables',
@@ -77,11 +79,14 @@ x = Dense(n_neuron, activation='relu')(inputs)
 
 x = res_block(x, scale, n_neuron, stage=1, block='a', bn=batch_norm,branches=branches)
 x = res_block(x, scale, n_neuron, stage=1, block='b', bn=batch_norm,branches=branches)
+#x = res_block(x, scale, n_neuron, stage=1, block='c', bn=batch_norm,branches=branches)
 
 predictions = Dense(dim_label, activation='linear')(x)
 
 model = Model(inputs=inputs, outputs=predictions)
 model.compile(loss='mse', optimizer='adam', metrics=['accuracy'])
+# get the model summary
+model.summary()
 
 # checkpoint (save the best model based validate loss)
 filepath = "./tmp/weights.best.cntk.hdf5"
