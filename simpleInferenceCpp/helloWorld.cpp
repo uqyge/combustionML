@@ -16,12 +16,13 @@ int main()
     std::vector<double> inputVals;
 
     // inputVals = as_vector<double>(pt, "in");
-    inputVals = {0.042, 0.722, 0.22, 0.042, 0.722, 0.22, 0.3, 0.948, 0.33};
+    inputVals = {0.042, 0.722, 0.22};
     // showVectorVals<double>(": Inputs :", inputVals);
 
     for (int i = 0; i < 3; ++i)
     {
         std::vector<double> resultVals;
+        showVectorVals<double>("Outputs:", resultVals);
         sample.infer(inputVals, resultVals);
         showVectorVals<double>("Outputs:", resultVals);
     }

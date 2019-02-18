@@ -1,0 +1,5 @@
+#!/bin/bash
+. activate my_dev
+echo $1
+python k2tf.py --input_model=$1 --output_model=tmp.pb
+

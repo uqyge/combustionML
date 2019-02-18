@@ -11,7 +11,7 @@ from keras.layers import Dense, Input
 from keras.callbacks import ModelCheckpoint
 
 from resBlock import res_block
-<<<<<<< HEAD
+
 from data_reader import read_hdf_data
 from writeANNProperties import writeANNProperties
 from keras import backend as K

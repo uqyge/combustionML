@@ -235,7 +235,7 @@ bool Net::infer(std::vector<double> &data_in, std::vector<double> &out)
 	unsigned dataSize = data_in.size() / inputShape;
 	// unsigned dataSize = 1e5;
 	int outSize = outputShape * dataSize;
-
+	// std::cout << dataSize << "\n";
 	// double resVal[int(1e8)]; //preallocate memory for output
 	static double resVal[int(1e8)]; //preallocate memory for output
 	assert(outSize < 1e8);
