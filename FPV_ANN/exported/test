@@ -1,2 +1,0 @@
-!/bin/bash
-trtexec --uff=wudi.uff --uffInput=input_1_2,1,3,1, --output=output_1_2/BiasAdd --batch=10240
