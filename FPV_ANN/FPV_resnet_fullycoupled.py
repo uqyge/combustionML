@@ -7,12 +7,18 @@ from sklearn.model_selection import train_test_split
 
 import tensorflow as tf
 from keras.models import Model
-from keras.layers import Dense, Input
+from keras.layers import Dense, Input, Dropout
 from keras.callbacks import ModelCheckpoint
 
+<<<<<<< HEAD
 from resBlock import res_block, res_block_org
 from data_reader import read_hdf_data, read_hdf_data_psi
 from writeANNProperties import writeANNProperties
+=======
+from utils.resBlock import res_block
+from utils.data_reader import read_hdf_data, read_hdf_data_psi
+from utils.writeANNProperties import writeANNProperties
+>>>>>>> 273e96f1ba1e57df0a8d4fd86086a335e0a381b7
 from keras import backend as K
 from keras.models import load_model
 
@@ -58,7 +64,7 @@ input_features=['f','zeta','pv']
 
 
 # read in the data
-X, y, df, in_scaler, out_scaler = read_hdf_data_psi('./tables_of_fgm.H5',key='of_tables',
+X, y, df, in_scaler, out_scaler = read_hdf_data_psi('./data/tables_of_fgm.h5',key='of_tables',
                                                 in_labels=input_features, labels = labels,scaler=scaler)
 
 # split into train and test data
@@ -81,6 +87,7 @@ x = Dense(n_neuron, activation='relu')(inputs)
 x = res_block(x, scale, n_neuron, stage=1, block='a', bn=batch_norm,branches=branches)
 x = res_block(x, scale, n_neuron, stage=1, block='b', bn=batch_norm,branches=branches)
 x = res_block(x, scale, n_neuron, stage=1, block='c', bn=batch_norm,branches=branches)
+
 
 predictions = Dense(dim_label, activation='linear')(x)
 
