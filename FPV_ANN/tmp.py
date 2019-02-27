@@ -59,3 +59,24 @@ input_features=['f','zeta','pv']
 # read in the data
 X, y, df, in_scaler, out_scaler = read_hdf_data_psi('./data/tables_of_fgm.h5',key='of_tables',
                                                 in_labels=input_features, labels = labels,scaler=scaler)
+
+
+def write_of_table(df,sp='T'):
+    with open(sp+'.txt','w') as f:
+        print('here')
+        f.write('501\n')
+        f.write('(\n')
+        pv_set = sorted(set(df.pv))
+        zeta_set = sorted(set(df.zeta))
+        for i in pv_set:
+            f.write('10\n')
+            f.write('(\n')
+            for j in zeta_set:
+                f.write('501\n')
+                f.write('(\n')
+                for k in df[(df.pv==i)&(df.zeta==j)][sp]:
+                    f.write(format(k,'5g')+'\n')
+                f.write(')\n')
+            f.write(')\n')
+        f.write(')\n')
+    print('finished')

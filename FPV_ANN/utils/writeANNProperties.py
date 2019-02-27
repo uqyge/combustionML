@@ -21,22 +21,22 @@ def writeANNProperties(in_scaler,out_scaler,scaler):
     if scaler == 'Standard':
         ANNProperties.write('\nin_scale\n')
         ANNProperties.write('{\n')
-        for i in range(len(in_scaler.mean_)):
-            mean_string = 'in_%i_mean      %.16f;\n' % (i + 1, in_scaler.mean_[i])
-            var_string = 'in_%i_var        %.16f;\n' % (i + 1, in_scaler.scale_[i])
+        for i in range(len(in_scaler.std.mean_)):
+            mean_string = 'in_%i_mean      %.16f;\n' % (i + 1, in_scaler.std.mean_[i])
+            var_string = 'in_%i_var        %.16f;\n' % (i + 1, in_scaler.std.scale_[i])
             ANNProperties.write(mean_string)
             ANNProperties.write(var_string)
 
         ANNProperties.write('}\n')
         ANNProperties.write('\nout_scale\n')
         ANNProperties.write('{\n')
-        for i in range(len(out_scaler.mean_)):
-            ANNProperties.write('out_%i_mean      %.16f;\n' % (i + 1, out_scaler.mean_[i]))
-            ANNProperties.write('out_%i_var       %.16f;\n' % (i + 1, out_scaler.scale_[i]))
+        for i in range(len(out_scaler.std.mean_)):
+            ANNProperties.write('out_%i_mean      %.16f;\n' % (i + 1, out_scaler.std.mean_[i]))
+            ANNProperties.write('out_%i_var       %.16f;\n' % (i + 1, out_scaler.std.scale_[i]))
         ANNProperties.write('}\n')
 
         # write the number of species
-        ANNProperties.write('nr_features         %i;\n' % len(out_scaler.mean_))
+        ANNProperties.write('nr_features         %i;\n' % len(out_scaler.std.mean_))
 
         ANNProperties.write('\ninput_layer         //input_1;\n')
         ANNProperties.write('output_layer        //dense_2;\n')

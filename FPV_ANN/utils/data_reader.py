@@ -26,7 +26,9 @@ class data_scaler(object):
             'no':'no',
             'log': 'log',
             'log_min':'log_min',
+            'log_std':'log_std',
             'log2': 'log2',
+            'cbrt_std':'cbrt_std',
             'tan': 'tan'
         }
 
@@ -58,7 +60,7 @@ class data_scaler(object):
             out = input_data
 
         if self.switcher.get(self.case) == 'log':
-            out = - np.log(np.asarray(input_data / self.scale) + self.bias)
+            out = np.log(np.asarray(input_data / self.scale) + self.bias)
             self.std = StandardScaler()
             out = self.std.fit_transform(out)
 
@@ -67,12 +69,23 @@ class data_scaler(object):
             self.norm = MinMaxScaler()
             out = self.norm.fit_transform(out)
 
+        if self.switcher.get(self.case) == 'log_std':
+            out = - np.log(np.asarray(input_data / self.scale) + self.bias)
+            self.std = StandardScaler()
+            out = self.std.fit_transform(out)
+
         if self.switcher.get(self.case) == 'log2':
             self.norm = MinMaxScaler()
-            self.norm_1 = MinMaxScaler()
+            self.std = StandardScaler()
             out = self.norm.fit_transform(input_data)
             out = np.log(np.asarray(out) + self.bias)
-            out = self.norm_1.fit_transform(out)
+            out = self.std.fit_transform(out)
+
+        if self.switcher.get(self.case) == 'cbrt_std':
+            out = np.cbrt(np.asarray(input_data / self.scale))
+            self.std = StandardScaler()
+            out = self.std.fit_transform(out)
+
 
         if self.switcher.get(self.case) == 'tan':
             self.norm = MaxAbsScaler()
@@ -102,17 +115,25 @@ class data_scaler(object):
             out = input_data
 
         if self.switcher.get(self.case) == 'log':
-            out = - np.log(np.asarray(input_data / self.scale) + self.bias)
+            out = np.log(np.asarray(input_data / self.scale) + self.bias)
             out = self.std.transform(out)
 
         if self.switcher.get(self.case) == 'log_min':
             out = - np.log(np.asarray(input_data / self.scale) + self.bias)
             out = self.norm.transform(out)
 
+        if self.switcher.get(self.case) == 'log_std':
+            out = - np.log(np.asarray(input_data / self.scale) + self.bias)
+            out = self.std.transform(out)
+
         if self.switcher.get(self.case) == 'log2':
             out = self.norm.transform(input_data)
             out = np.log(np.asarray(out) + self.bias)
-            out = self.norm_1.transform(out)
+            out = self.std.transform(out)
+
+        if self.switcher.get(self.case) == 'cbrt_std':
+            out = np.cbrt(np.asarray(input_data / self.scale))
+            out = self.std.transform(out)
 
         if self.switcher.get(self.case) == 'tan':
             out = self.std.transform(input_data)
@@ -142,16 +163,24 @@ class data_scaler(object):
 
         if self.switcher.get(self.case) == 'log':
             out = self.std.inverse_transform(input_data)
-            out = (np.exp(-out) - self.bias) * self.scale
+            out = (np.exp(out) - self.bias) * self.scale
 
         if self.switcher.get(self.case) == 'log_min':
             out = self.norm.inverse_transform(input_data)
             out = (np.exp(-out) - self.bias) * self.scale
 
+        if self.switcher.get(self.case) == 'log_std':
+            out = self.std.inverse_transform(input_data)
+            out = (np.exp(-out) - self.bias) * self.scale
+
         if self.switcher.get(self.case) == 'log2':
-            out = self.norm_1.inverse_transform(input_data)
+            out = self.std.inverse_transform(input_data)
             out = np.exp(out) - self.bias
             out = self.norm.inverse_transform(out)
+
+        if self.switcher.get(self.case) == 'cbrt_std':
+            out = self.std.inverse_transform(input_data)
+            out = np.power(out,3) * self.scale
 
         if self.switcher.get(self.case) == 'tan':
             out = (2 * np.pi + self.bias) * np.arctan(input_data)
@@ -187,6 +216,17 @@ def read_csv_data(path = 'premix_data', labels = ['T','CH4','O2','CO2','CO','H2O
 
 def read_h5_data(fileName, input_features=['zeta','f','pv'], labels = ['T','CH4','O2','CO2','CO','H2O','H2','OH','PVs'],i_scaler='no',o_scaler='no'):
     df = pd.read_hdf(fileName)
+    df = df.clip(lower=0)
+    df_o = df
+
+    # df = df[df['pv']<0.994]
+    # df=df[df['pv']>=0.99]
+
+    # df['PVs']=df['PVs']+1
+    # for i in range(5):
+    #     pv_101=df[df['pv']==1]
+    #     pv_101['pv']=pv_101['pv']+0.002*(i+1)
+    #     df = pd.concat([df,pv_101])
 
     print('Outputs: ',labels)
 
@@ -198,7 +238,7 @@ def read_h5_data(fileName, input_features=['zeta','f','pv'], labels = ['T','CH4'
     out_scaler = data_scaler()
     label_np = out_scaler.fit_transform(label_df,o_scaler)
 
-    return input_np, label_np, df, in_scaler, out_scaler
+    return input_np, label_np, df_o, in_scaler, out_scaler
 
 def read_hdf_data(path = 'premix_data',key='of_tables',in_labels=['zeta','f','pv'], labels = ['T'],scaler=None):
     # read in the hdf5 file
@@ -249,6 +289,7 @@ def read_hdf_data_psi(path = 'premix_data', key='of_tables', in_labels=['zeta','
 
     # numpy array of species molar weights
     molar_weights_np = np.array([molar_weights[s] for s in all_species])
+    molar_weights_np = molar_weights_np / 1000
     T_vector = df['T'].as_matrix()
 
     # convert to ndarray

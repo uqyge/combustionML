@@ -44,7 +44,7 @@ def res_block(input_tensor, scale, n_neuron, stage, block, bn=False, branches=0)
         x = BatchNormalization(axis=-1, name=bn_name_base + '2a')(x)
     x = Activation('relu')(x)
 
-    dp1 = 0.1
+    dp1 = 0.
 
     if dp1 > 0:
         x = Dropout(dp1)(x)
