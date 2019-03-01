@@ -10,15 +10,9 @@ from keras.models import Model
 from keras.layers import Dense, Input, Dropout
 from keras.callbacks import ModelCheckpoint
 
-<<<<<<< HEAD
-from resBlock import res_block, res_block_org
-from data_reader import read_hdf_data, read_hdf_data_psi
-from writeANNProperties import writeANNProperties
-=======
 from utils.resBlock import res_block
 from utils.data_reader import read_hdf_data, read_hdf_data_psi
 from utils.writeANNProperties import writeANNProperties
->>>>>>> 273e96f1ba1e57df0a8d4fd86086a335e0a381b7
 from keras import backend as K
 from keras.models import load_model
 
