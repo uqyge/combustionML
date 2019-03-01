@@ -28,7 +28,9 @@ class data_scaler(object):
             'log_min':'log_min',
             'log_std':'log_std',
             'log2': 'log2',
-            'cbrt_std':'cbrt_std',
+            'sqrt_std': 'sqrt_std',
+            'cbrt_std': 'cbrt_std',
+            'nrt_std':'nrt_std',
             'tan': 'tan'
         }
 
@@ -59,11 +61,6 @@ class data_scaler(object):
             self.std = StandardScaler()
             out = input_data
 
-        if self.switcher.get(self.case) == 'log':
-            out = np.log(np.asarray(input_data / self.scale) + self.bias)
-            self.std = StandardScaler()
-            out = self.std.fit_transform(out)
-
         if self.switcher.get(self.case) == 'log_min':
             out = - np.log(np.asarray(input_data / self.scale) + self.bias)
             self.norm = MinMaxScaler()
@@ -81,11 +78,20 @@ class data_scaler(object):
             out = np.log(np.asarray(out) + self.bias)
             out = self.std.fit_transform(out)
 
+        if self.switcher.get(self.case) == 'sqrt_std':
+            out = np.sqrt(np.asarray(input_data / self.scale))
+            self.std = StandardScaler()
+            out = self.std.fit_transform(out)
+
         if self.switcher.get(self.case) == 'cbrt_std':
             out = np.cbrt(np.asarray(input_data / self.scale))
             self.std = StandardScaler()
             out = self.std.fit_transform(out)
 
+        if self.switcher.get(self.case) == 'nrt_std':
+            out = np.power(np.asarray(input_data / self.scale),1/4)
+            self.std = StandardScaler()
+            out = self.std.fit_transform(out)
 
         if self.switcher.get(self.case) == 'tan':
             self.norm = MaxAbsScaler()
@@ -114,10 +120,6 @@ class data_scaler(object):
         if self.switcher.get(self.case) == 'no':
             out = input_data
 
-        if self.switcher.get(self.case) == 'log':
-            out = np.log(np.asarray(input_data / self.scale) + self.bias)
-            out = self.std.transform(out)
-
         if self.switcher.get(self.case) == 'log_min':
             out = - np.log(np.asarray(input_data / self.scale) + self.bias)
             out = self.norm.transform(out)
@@ -131,8 +133,16 @@ class data_scaler(object):
             out = np.log(np.asarray(out) + self.bias)
             out = self.std.transform(out)
 
+        if self.switcher.get(self.case) == 'sqrt_std':
+            out = np.sqrt(np.asarray(input_data / self.scale))
+            out = self.std.transform(out)
+
         if self.switcher.get(self.case) == 'cbrt_std':
             out = np.cbrt(np.asarray(input_data / self.scale))
+            out = self.std.transform(out)
+
+        if self.switcher.get(self.case) == 'nrt_std':
+            out = np.power(np.asarray(input_data / self.scale),1/4)
             out = self.std.transform(out)
 
         if self.switcher.get(self.case) == 'tan':
@@ -161,10 +171,6 @@ class data_scaler(object):
         if self.switcher.get(self.case) == 'no':
             out = input_data
 
-        if self.switcher.get(self.case) == 'log':
-            out = self.std.inverse_transform(input_data)
-            out = (np.exp(out) - self.bias) * self.scale
-
         if self.switcher.get(self.case) == 'log_min':
             out = self.norm.inverse_transform(input_data)
             out = (np.exp(-out) - self.bias) * self.scale
@@ -178,9 +184,17 @@ class data_scaler(object):
             out = np.exp(out) - self.bias
             out = self.norm.inverse_transform(out)
 
+        if self.switcher.get(self.case) == 'sqrt_std':
+            out = self.std.inverse_transform(input_data)
+            out = np.power(out,2) * self.scale
+
         if self.switcher.get(self.case) == 'cbrt_std':
             out = self.std.inverse_transform(input_data)
             out = np.power(out,3) * self.scale
+
+        if self.switcher.get(self.case) == 'nrt_std':
+            out = self.std.inverse_transform(input_data)
+            out = np.power(out,4) * self.scale
 
         if self.switcher.get(self.case) == 'tan':
             out = (2 * np.pi + self.bias) * np.arctan(input_data)
@@ -219,8 +233,8 @@ def read_h5_data(fileName, input_features=['zeta','f','pv'], labels = ['T','CH4'
     df = df.clip(lower=0)
     df_o = df
 
-    # df = df[df['pv']<0.994]
-    # df=df[df['pv']>=0.99]
+    df = df[(df.f <0.42)]
+    # df=df[(df.f<0.43)|(df.f>0.58)]
 
     # df['PVs']=df['PVs']+1
     # for i in range(5):
