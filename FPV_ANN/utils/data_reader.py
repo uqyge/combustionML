@@ -4,7 +4,7 @@ import pandas as pd
 
 import json
 from sklearn import preprocessing
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, PowerTransformer
 
 
 class data_scaler(object):
@@ -12,6 +12,7 @@ class data_scaler(object):
         self.norm = None
         self.norm_1 = None
         self.std = None
+        self.bc = None
         self.case = None
         self.scale = 1
         self.bias = 1e-20
@@ -31,6 +32,7 @@ class data_scaler(object):
             'sqrt_std': 'sqrt_std',
             'cbrt_std': 'cbrt_std',
             'nrt_std':'nrt_std',
+            'bc':'bc',
             'tan': 'tan'
         }
 
@@ -79,9 +81,12 @@ class data_scaler(object):
             out = self.std.fit_transform(out)
 
         if self.switcher.get(self.case) == 'sqrt_std':
-            out = np.sqrt(np.asarray(input_data / self.scale))
+            self.norm = MinMaxScaler()
             self.std = StandardScaler()
+            out = self.norm.fit_transform(input_data)
+            out = np.sqrt(np.asarray(out / self.scale))
             out = self.std.fit_transform(out)
+
 
         if self.switcher.get(self.case) == 'cbrt_std':
             out = np.cbrt(np.asarray(input_data / self.scale))
@@ -92,6 +97,11 @@ class data_scaler(object):
             out = np.power(np.asarray(input_data / self.scale),1/4)
             self.std = StandardScaler()
             out = self.std.fit_transform(out)
+
+        if self.switcher.get(self.case) == 'bc':
+            self.bc = PowerTransformer(method='box-cox')
+            out = self.bc.fit_transform(input_data + self.bias)
+            print('lambda:', self.bc.lambdas_)
 
         if self.switcher.get(self.case) == 'tan':
             self.norm = MaxAbsScaler()
@@ -134,7 +144,8 @@ class data_scaler(object):
             out = self.std.transform(out)
 
         if self.switcher.get(self.case) == 'sqrt_std':
-            out = np.sqrt(np.asarray(input_data / self.scale))
+            out = self.norm.transform(input_data)
+            out = np.sqrt(np.asarray(out / self.scale))
             out = self.std.transform(out)
 
         if self.switcher.get(self.case) == 'cbrt_std':
@@ -144,6 +155,9 @@ class data_scaler(object):
         if self.switcher.get(self.case) == 'nrt_std':
             out = np.power(np.asarray(input_data / self.scale),1/4)
             out = self.std.transform(out)
+
+        if self.switcher.get(self.case) == 'bc':
+            out = self.bc.transform(input_data + self.bias)
 
         if self.switcher.get(self.case) == 'tan':
             out = self.std.transform(input_data)
@@ -187,6 +201,7 @@ class data_scaler(object):
         if self.switcher.get(self.case) == 'sqrt_std':
             out = self.std.inverse_transform(input_data)
             out = np.power(out,2) * self.scale
+            out = self.norm.inverse_transform(out)
 
         if self.switcher.get(self.case) == 'cbrt_std':
             out = self.std.inverse_transform(input_data)
@@ -195,6 +210,10 @@ class data_scaler(object):
         if self.switcher.get(self.case) == 'nrt_std':
             out = self.std.inverse_transform(input_data)
             out = np.power(out,4) * self.scale
+
+        if self.switcher.get(self.case) == 'bc':
+            out = self.bc.inverse_transform(input_data)
+            out = out - self.bias
 
         if self.switcher.get(self.case) == 'tan':
             out = (2 * np.pi + self.bias) * np.arctan(input_data)
@@ -232,8 +251,8 @@ def read_h5_data(fileName, input_features=['zeta','f','pv'], labels = ['T','CH4'
     df = pd.read_hdf(fileName)
     df = df.clip(lower=0)
     df_o = df
-
-    df = df[(df.f <0.42)]
+    # df['NH3'] = df['NH3']+1
+    df = df[(df.f <= 0.2)]
     # df=df[(df.f<0.43)|(df.f>0.58)]
 
     # df['PVs']=df['PVs']+1

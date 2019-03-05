@@ -16,12 +16,12 @@ from utils.resBlock import res_block
 from utils.data_reader import read_h5_data
 from utils.writeANNProperties import writeANNProperties
 from utils.customObjects import coeff_r2, SGDRScheduler
-from utils.AdamW import AdamW
+
 
 # define the labels
 labels = []
 
-with open('GRI_species_order', 'r') as f:
+with open('GRI_13', 'r') as f:
     species = f.readlines()
     for line in species:
         # remove linebreak which is the last character of the string
@@ -33,6 +33,10 @@ with open('GRI_species_order', 'r') as f:
 # labels.append('heatRelease')
 labels.append('T')
 labels.append('PVs')
+# labels.remove('H')
+# labels.remove('CH2O')
+# labels.remove('HO2')
+# labels.append('H')
 
 # tabulate psi, mu, alpha
 # labels.append('psi')
@@ -48,10 +52,10 @@ input_features = ['f', 'zeta', 'pv']
 
 
 # read in the data
-X, y, df, in_scaler, out_scaler = read_h5_data('./data/tables_of_fgm_psi_of.h5',
+X, y, df, in_scaler, out_scaler = read_h5_data('./data/tables_of_fgm_psi_n2fix.h5',
                                                input_features=input_features,
                                                labels=labels,
-                                               i_scaler='no', o_scaler='nrt_std')
+                                               i_scaler='no', o_scaler='bc')
 
 # write the OpenFOAM ANNProperties file
 scaler = 'Standard'
@@ -79,6 +83,7 @@ x = Dense(n_neuron, activation='relu')(inputs)
 # less then 2 res_block, there will be variance
 x = res_block(x, scale, n_neuron, stage=1, block='a', bn=batch_norm, branches=branches)
 x = res_block(x, scale, n_neuron, stage=1, block='b', bn=batch_norm, branches=branches)
+# x = res_block(x, scale, n_neuron, stage=1, block='c', bn=batch_norm, branches=branches)
 
 x = Dense(100, activation='relu')(x)
 # x = Dropout(0.1)(x)
@@ -89,8 +94,8 @@ model = Model(inputs=inputs, outputs=predictions)
 model.summary()
 
 # %%
-vsplit = 0.2
-batch_size = 1024 * 8 * 4
+vsplit = 0.1
+batch_size = 1024 * 8
 
 # checkpoint (save the best model based validate loss)
 filepath = "./tmp/weights.best.cntk.hdf5"
@@ -106,13 +111,13 @@ epoch_size = X_train.shape[0]
 a = 0
 base = 2
 clc = 2
-for i in range(5):
+for i in range(9):
     a += base * clc ** (i)
 epochs, c_len = a, base
 
 schedule = SGDRScheduler(min_lr=1e-6, max_lr=1e-4,
                          steps_per_epoch=np.ceil(epoch_size / batch_size),
-                         cycle_length=c_len, lr_decay=0.6, mult_factor=clc)
+                         cycle_length=c_len, lr_decay=0.8, mult_factor=clc)
 
 callbacks_list = [checkpoint,schedule]
 # callbacks_list = [checkpoint]
@@ -133,7 +138,7 @@ for i in range(1):
         validation_split=vsplit,
         verbose=2,
         callbacks=callbacks_list,
-        shuffle=True)
+        shuffle=False)
 
 # loss
 fig = plt.figure()
@@ -151,7 +156,7 @@ model.save('./tmp/calc_100_3_3_100_cbrt.h5')
 n_res = 501
 sp='PVs'
 for i in range(11):
-    # pv_level = 0.03+i*0.002
+    # pv_level = 0.98+i*0.002
     pv_level = i /10
     f_1 = np.linspace(0, 1, n_res)
     z_1 = np.zeros(n_res)
@@ -165,6 +170,7 @@ for i in range(11):
     table_val=df[(df.pv==pv_level) & (df.zeta==0)][sp]
 
     fig = plt.figure()
+    plt.xlim([0,0.2])
     plt.plot(f_1,out[sp],'k')
     plt.plot(f_1,table_val,'rd')
     plt.title(pv_level)
@@ -173,7 +179,7 @@ for i in range(11):
 #%%
 n_res = 501
 for sp in labels:
-    f_level = 0.044
+    f_level = 0.18
     f_1 = np.ones(n_res) * f_level
     z_1 = np.zeros(n_res)
     pv_1 = np.linspace(0,1,n_res)
@@ -188,7 +194,7 @@ for sp in labels:
     fig = plt.figure()
     plt.plot(pv_1,out[sp],'k')
     plt.plot(pv_1,table_val,'rd',ms=1)
-    plt.title(sp+':'+str(f_level))
+    plt.title(sp+':'+str(f_level)+'_max_'+str(df[sp].max()))
     plt.show()
 
 #%%
