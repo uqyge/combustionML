@@ -55,11 +55,12 @@ input_features = ['f', 'zeta', 'pv']
 X, y, df, in_scaler, out_scaler = read_h5_data('./data/tables_of_fgm_psi_n2fix.h5',
                                                input_features=input_features,
                                                labels=labels,
-                                               i_scaler='no', o_scaler='bc')
+                                               i_scaler='no', o_scaler='cbrt_std')
 
 # write the OpenFOAM ANNProperties file
 scaler = 'Standard'
-# writeANNProperties(in_scaler,out_scaler,scaler)
+if(hasattr(out_scaler.std,'mean_')):
+    writeANNProperties(in_scaler,out_scaler,scaler,labels)
 
 # split into train and test data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.01)
@@ -111,7 +112,7 @@ epoch_size = X_train.shape[0]
 a = 0
 base = 2
 clc = 2
-for i in range(9):
+for i in range(8):
     a += base * clc ** (i)
 epochs, c_len = a, base
 
@@ -138,7 +139,7 @@ for i in range(1):
         validation_split=vsplit,
         verbose=2,
         callbacks=callbacks_list,
-        shuffle=False)
+        shuffle=True)
 
 # loss
 fig = plt.figure()
@@ -150,7 +151,7 @@ plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper right')
 plt.show()
-model.save('./tmp/calc_100_3_3_100_cbrt.h5')
+model.save('./tmp/gri13_cbrt.h5')
 
 #%%
 n_res = 501
@@ -179,7 +180,7 @@ for i in range(11):
 #%%
 n_res = 501
 for sp in labels:
-    f_level = 0.18
+    f_level = 0.04
     f_1 = np.ones(n_res) * f_level
     z_1 = np.zeros(n_res)
     pv_1 = np.linspace(0,1,n_res)

@@ -1,8 +1,9 @@
 #gitignore
-
+*.eps
 *.png
 
 *.csv
+*.h5
 
 *.key
 

@@ -252,7 +252,7 @@ def read_h5_data(fileName, input_features=['zeta','f','pv'], labels = ['T','CH4'
     df = df.clip(lower=0)
     df_o = df
     # df['NH3'] = df['NH3']+1
-    df = df[(df.f <= 0.2)]
+    # df = df[(df.f <= 0.2)]
     # df=df[(df.f<0.43)|(df.f>0.58)]
 
     # df['PVs']=df['PVs']+1

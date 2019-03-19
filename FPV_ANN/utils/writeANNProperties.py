@@ -1,12 +1,13 @@
 import os
 
-def writeANNProperties(in_scaler,out_scaler,scaler):
+def writeANNProperties(in_scaler,out_scaler,scaler,labels):
     try:
         assert os.path.isdir('ANNProperties')
     except:
         os.mkdir('ANNProperties')
 
-    ANNProperties = open('ANNProperties/ANNProperties_'+scaler, 'w')
+    s='_'
+    ANNProperties = open('ANNProperties/ANNProperties_'+s.join(x for x in labels), 'w')
 
     try:
         with open('ANNProperties/top', encoding='utf-8') as f:
@@ -21,12 +22,18 @@ def writeANNProperties(in_scaler,out_scaler,scaler):
     if scaler == 'Standard':
         ANNProperties.write('\nin_scale\n')
         ANNProperties.write('{\n')
-        for i in range(len(in_scaler.std.mean_)):
-            mean_string = 'in_%i_mean      %.16f;\n' % (i + 1, in_scaler.std.mean_[i])
-            var_string = 'in_%i_var        %.16f;\n' % (i + 1, in_scaler.std.scale_[i])
-            ANNProperties.write(mean_string)
-            ANNProperties.write(var_string)
-
+        if(hasattr(in_scaler.std, 'mean_')):
+            for i in range(len(in_scaler.std.mean_)):
+                mean_string = 'in_%i_mean      %.16f;\n' % (i + 1, in_scaler.std.mean_[i])
+                var_string = 'in_%i_var        %.16f;\n' % (i + 1, in_scaler.std.scale_[i])
+                ANNProperties.write(mean_string)
+                ANNProperties.write(var_string)
+        else:
+            for i in range(3):
+                mean_string = 'in_%i_mean      %.16f;\n' % (i + 1, 0)
+                var_string = 'in_%i_var        %.16f;\n' % (i + 1, 1)
+                ANNProperties.write(mean_string)
+                ANNProperties.write(var_string)
         ANNProperties.write('}\n')
         ANNProperties.write('\nout_scale\n')
         ANNProperties.write('{\n')
